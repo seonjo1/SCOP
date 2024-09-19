@@ -318,8 +318,35 @@ float glmath::dot(const glmath::vec4& vector1, const glmath::vec4& vector2) {
 	return ret;
 }
 
-glmath::vec3 cross(const glmath::vec3& vector1, const glmath::vec3& vector2) {
+glmath::vec3 glmath::cross(const glmath::vec3& vector1, const glmath::vec3& vector2) {
 	return glmath::vec3(vector1.y * vector2.z - vector1.z * vector2.y,
 						vector1.z * vector2.x - vector1.x * vector2.z,
 						vector1.x * vector2.y - vector1.y * vector2.x);
+}
+
+glmath::vec2 glmath::normalize(const glmath::vec2& vector) {
+	float magnitude = 0;
+	for (int i = 0; i < 2; i++) {
+		magnitude += pow(vector[i], 2); 
+	}
+	magnitude = sqrt(magnitude);
+	return glmath::vec2(vector.x / magnitude, vector.y / magnitude);
+}
+
+glmath::vec3 glmath::normalize(const glmath::vec3& vector) {
+	float magnitude = 0;
+	for (int i = 0; i < 3; i++) {
+		magnitude += pow(vector[i], 2); 
+	}
+	magnitude = sqrt(magnitude);
+	return glmath::vec3(vector.x / magnitude, vector.y / magnitude, vector.z / magnitude);
+}
+
+glmath::vec4 glmath::normalize(const glmath::vec4& vector) {
+	float magnitude = 0;
+	for (int i = 0; i < 4; i++) {
+		magnitude += pow(vector[i], 2); 
+	}
+	magnitude = sqrt(magnitude);
+	return glmath::vec4(vector.x / magnitude, vector.y / magnitude, vector.z / magnitude, vector.w / magnitude);
 }
