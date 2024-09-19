@@ -317,3 +317,9 @@ float glmath::dot(const glmath::vec4& vector1, const glmath::vec4& vector2) {
 	}
 	return ret;
 }
+
+glmath::vec3 cross(const glmath::vec3& vector1, const glmath::vec3& vector2) {
+	return glmath::vec3(vector1.y * vector2.z - vector1.z * vector2.y,
+						vector1.z * vector2.x - vector1.x * vector2.z,
+						vector1.x * vector2.y - vector1.y * vector2.x);
+}
