@@ -2,6 +2,9 @@
 
 // class vec2
 
+glmath::vec2::vec2()
+	: x(0.0f), y(0.0f) {};
+
 glmath::vec2::vec2(float x)
 	: x(x), y(x) {};
 
@@ -17,20 +20,44 @@ glmath::vec2& glmath::vec2::operator=(const glmath::vec2& copy) {
 	return *this;
 }
 
-glmath::vec2 glmath::vec2::operator+(const vec2& copy) const {
-	return glmath::vec2(this->x + copy.x, this->y + copy.y);
+glmath::vec2 glmath::vec2::operator+(const vec2& rhs) const {
+	return glmath::vec2(this->x + rhs.x, this->y + rhs.y);
 }
 
-glmath::vec2 glmath::vec2::operator-(const vec2& copy) const{
-	return glmath::vec2(this->x - copy.x, this->y - copy.y);
+glmath::vec2 glmath::vec2::operator-(const vec2& rhs) const{
+	return glmath::vec2(this->x - rhs.x, this->y - rhs.y);
 }
 
-glmath::vec2 glmath::vec2::operator*(const vec2& copy) const{
-	return glmath::vec2(this->x * copy.x, this->y * copy.y);
+glmath::vec2 glmath::vec2::operator*(const vec2& rhs) const{
+	return glmath::vec2(this->x * rhs.x, this->y * rhs.y);
 }
 
+float& glmath::vec2::operator[](int idx){
+	switch (idx) {
+		case 0:
+			return this->x;
+		case 1:
+			return this->y;
+		default:
+			throw std::out_of_range("Index out of range");
+	}
+}
+
+float glmath::vec2::operator[](int idx) const{
+	switch (idx) {
+		case 0:
+			return this->x;
+		case 1:
+			return this->y;
+		default:
+			throw std::out_of_range("Index out of range");
+	}
+}
 
 // class vec3
+
+glmath::vec3::vec3()
+	: x(0.0f), y(0.0f), z(0.0f) {};
 
 glmath::vec3::vec3(float x)
 	: x(x), y(x), z(x) {};
@@ -48,20 +75,48 @@ glmath::vec3& glmath::vec3::operator=(const glmath::vec3& copy) {
 	return *this;
 }
 
-glmath::vec3 glmath::vec3::operator+(const vec3& copy) const {
-	return glmath::vec3(this->x + copy.x, this->y + copy.y, this->z + copy.z);
+glmath::vec3 glmath::vec3::operator+(const vec3& rhs) const {
+	return glmath::vec3(this->x + rhs.x, this->y + rhs.y, this->z + rhs.z);
 }
 
-glmath::vec3 glmath::vec3::operator-(const vec3& copy) const{
-	return glmath::vec3(this->x - copy.x, this->y - copy.y, this->z - copy.z);
+glmath::vec3 glmath::vec3::operator-(const vec3& rhs) const{
+	return glmath::vec3(this->x - rhs.x, this->y - rhs.y, this->z - rhs.z);
 }
 
-glmath::vec3 glmath::vec3::operator*(const vec3& copy) const{
-	return glmath::vec3(this->x * copy.x, this->y * copy.y, this->z * copy.z);
+glmath::vec3 glmath::vec3::operator*(const vec3& rhs) const{
+	return glmath::vec3(this->x * rhs.x, this->y * rhs.y, this->z * rhs.z);
 }
 
+float& glmath::vec3::operator[](int idx){
+	switch (idx) {
+		case 0:
+			return this->x;
+		case 1:
+			return this->y;
+		case 2:
+			return this->z;
+		default:
+			throw std::out_of_range("Index out of range");
+	}
+}
+
+float glmath::vec3::operator[](int idx) const{
+	switch (idx) {
+		case 0:
+			return this->x;
+		case 1:
+			return this->y;
+		case 2:
+			return this->z;
+		default:
+			throw std::out_of_range("Index out of range");
+	}
+}
 
 // class vec4
+
+glmath::vec4::vec4()
+	: x(0.0f), y(0.0f), z(0.0f), w(0.0f) {}; 
 
 glmath::vec4::vec4(float x)
 	: x(x), y(x), z(x), w(x) {};
@@ -80,14 +135,106 @@ glmath::vec4& glmath::vec4::operator=(const glmath::vec4& copy) {
 	return *this;
 }
 
-glmath::vec4 glmath::vec4::operator+(const vec4& copy) const {
-	return glmath::vec4(this->x + copy.x, this->y + copy.y, this->z + copy.z, this->w + copy.w);
+glmath::vec4 glmath::vec4::operator+(const vec4& rhs) const {
+	return glmath::vec4(this->x + rhs.x, this->y + rhs.y, this->z + rhs.z, this->w + rhs.w);
 }
 
-glmath::vec4 glmath::vec4::operator-(const vec4& copy) const{
-	return glmath::vec4(this->x - copy.x, this->y - copy.y, this->z - copy.z, this->w - copy.w);
+glmath::vec4 glmath::vec4::operator-(const vec4& rhs) const {
+	return glmath::vec4(this->x - rhs.x, this->y - rhs.y, this->z - rhs.z, this->w - rhs.w);
 }
 
-glmath::vec4 glmath::vec4::operator*(const vec4& copy) const{
-	return glmath::vec4(this->x * copy.x, this->y * copy.y, this->z * copy.z, this->w * copy.w);
+glmath::vec4 glmath::vec4::operator*(const vec4& rhs) const {
+	return glmath::vec4(this->x * rhs.x, this->y * rhs.y, this->z * rhs.z, this->w * rhs.w);
+}
+
+float& glmath::vec4::operator[](int idx){
+	switch (idx) {
+		case 0:
+			return this->x;
+		case 1:
+			return this->y;
+		case 2:
+			return this->z;
+		case 3:
+			return this->w;
+		default:
+			throw std::out_of_range("Index out of range");
+	}
+}
+
+float glmath::vec4::operator[](int idx) const{
+	switch (idx) {
+		case 0:
+			return this->x;
+		case 1:
+			return this->y;
+		case 2:
+			return this->z;
+		case 3:
+			return this->w;
+		default:
+			throw std::out_of_range("Index out of range");
+	}
+}
+
+
+// class mat4
+
+glmath::mat4::mat4()
+	: data{} {};
+
+glmath::mat4::mat4(float x)
+	: data{glmath::vec4(x, 0.0f, 0.0f, 0.0f), glmath::vec4(0.0f, x, 0.0f, 0.0f),
+		glmath::vec4(0.0f, 0.0f, x, 0.0f), glmath::vec4(0.0f, 0.0f, 0.0f, x)} {};
+
+glmath::mat4::mat4(const vec4& c1, const vec4& c2, const vec4& c3, const vec4& c4)
+	: data{c1, c2, c3, c4} {};
+
+glmath::mat4::mat4(const glmath::mat4& copy) {
+	for (int i = 0; i < 4; i++) {
+		(*this)[i] = copy[i];
+	}
+}
+
+glmath::mat4& glmath::mat4::operator=(const mat4& copy) {
+	for (int i = 0; i < 4; i++) {
+		(*this)[i] = copy[i];
+	}
+	return *this;
+}
+
+glmath::mat4 glmath::mat4::operator+(const mat4& rhs) const {
+	return glmath::mat4(glmath::vec4((*this)[0] + rhs[0]),
+						glmath::vec4((*this)[1] + rhs[1]),
+						glmath::vec4((*this)[2] + rhs[2]),
+						glmath::vec4((*this)[3] + rhs[3]));
+}
+
+glmath::mat4 glmath::mat4::operator-(const mat4& rhs) const {
+	return glmath::mat4(glmath::vec4((*this)[0] - rhs[0]),
+						glmath::vec4((*this)[1] - rhs[1]),
+						glmath::vec4((*this)[2] - rhs[2]),
+						glmath::vec4((*this)[3] - rhs[3]));
+}
+
+glmath::mat4 glmath::mat4::operator*(const mat4& rhs) const {
+	glmath::mat4 ret(0.0f);
+	for (int i = 0; i < 4; i++) {
+		for (int j = 0; j < 4; j++) {
+			for (int k = 0; k < 4; k++) {
+				ret[j][i] += (*this)[k][i] * rhs[j][k];
+			}
+		}
+	}
+	return ret;
+}
+
+glmath::vec4& glmath::mat4::operator[](int idx) {
+	if (0 <= idx && idx < 4) return this->data[idx];
+	throw std::out_of_range("Index out of range");
+}
+
+glmath::vec4 glmath::mat4::operator[](int idx) const {
+	if (0 <= idx && idx < 4) return this->data[idx];
+	throw std::out_of_range("Index out of range");
 }
