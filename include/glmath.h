@@ -10,6 +10,7 @@ public:
     float x;
     float y;
 
+	vec2(float x);
 	vec2(float x, float y);
 	vec2(const vec2& copy);
 	vec2& operator=(const vec2& copy);
