@@ -95,6 +95,13 @@ vec4 operator*(const vec4& vector, float scalar);
 mat4 operator*(float scalar, const mat4& matrix);
 mat4 operator*(const mat4& matrix, float scalar);
 
+float pi = 3.14159f;
+
+float* value_ptr(vec2& vector);
+float* value_ptr(vec3& vector);
+float* value_ptr(vec4& vector);
+float* value_ptr(mat4& matrix);
+
 }
 
 
