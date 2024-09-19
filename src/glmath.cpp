@@ -238,3 +238,41 @@ glmath::vec4 glmath::mat4::operator[](int idx) const {
 	if (0 <= idx && idx < 4) return this->data[idx];
 	throw std::out_of_range("Index out of range");
 }
+
+// non-member function
+
+
+glmath::vec2 glmath::operator*(float scalar, const glmath::vec2& vector) {
+	return glmath::vec2(scalar * vector.x, scalar * vector.y);
+}
+
+glmath::vec2 glmath::operator*(const glmath::vec2& vector, float scalar) {
+	return glmath::vec2(scalar * vector.x, scalar * vector.y);
+}
+
+
+glmath::vec3 glmath::operator*(float scalar, const glmath::vec3& vector) {
+	return glmath::vec3(scalar * vector.x, scalar * vector.y, scalar * vector.z);
+}
+
+glmath::vec3 glmath::operator*(const glmath::vec3& vector, float scalar) {
+	return glmath::vec3(scalar * vector.x, scalar * vector.y, scalar * vector.z);
+}
+
+
+glmath::vec4 glmath::operator*(float scalar, const glmath::vec4& vector) {
+	return glmath::vec4(scalar * vector.x, scalar * vector.y, scalar * vector.z, scalar * vector.w);
+}
+
+glmath::vec4 glmath::operator*(const glmath::vec4& vector, float scalar) {
+	return glmath::vec4(scalar * vector.x, scalar * vector.y, scalar * vector.z, scalar * vector.w);
+}
+
+
+glmath::mat4 glmath::operator*(float scalar, const glmath::mat4& matrix) {
+	return glmath::mat4({scalar * matrix[0], scalar * matrix[1], scalar * matrix[2], scalar * matrix[3]});
+}
+
+glmath::mat4 glmath::operator*(const glmath::mat4& matrix, float scalar) {
+	return glmath::mat4({scalar * matrix[0], scalar * matrix[1], scalar * matrix[2], scalar * matrix[3]});
+}
