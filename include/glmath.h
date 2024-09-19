@@ -19,6 +19,23 @@ public:
 	vec2 operator*(const vec2& copy) const;
 };
 
+class vec3 {
+private:
+
+public:
+    float x;
+    float y;
+    float z;
+
+	vec3(float x);
+	vec3(float x, float y, float z);
+	vec3(const vec2& copy);
+	vec3& operator=(const vec3& copy);
+	vec3 operator+(const vec3& copy) const;
+	vec3 operator-(const vec3& copy) const;
+	vec3 operator*(const vec3& copy) const;
+};
+
 }
 
 #endif
