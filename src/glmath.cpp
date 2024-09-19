@@ -293,3 +293,27 @@ float* glmath::value_ptr(vec4& vector) {
 float* glmath::value_ptr(mat4& matrix) {
 	return &matrix[0][0];
 }
+
+float glmath::dot(const glmath::vec2& vector1, const glmath::vec2& vector2) {
+	float ret = 0.0f;
+	for (int i = 0; i < 2; i++) {
+		ret += vector1[i] * vector2[i];
+	}
+	return ret;
+}
+
+float glmath::dot(const glmath::vec3& vector1, const glmath::vec3& vector2) {
+	float ret = 0.0f;
+	for (int i = 0; i < 3; i++) {
+		ret += vector1[i] * vector2[i];
+	}
+	return ret;
+}
+
+float glmath::dot(const glmath::vec4& vector1, const glmath::vec4& vector2) {
+	float ret = 0.0f;
+	for (int i = 0; i < 4; i++) {
+		ret += vector1[i] * vector2[i];
+	}
+	return ret;
+}
