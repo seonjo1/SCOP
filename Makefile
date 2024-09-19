@@ -5,7 +5,7 @@ all : $(NAME)
 $(NAME):
 	@cmake -Bbuild . 
 	@cmake --build build --config Debug
-	@mv ./build/Debug/SCOP.exe ./SCOP
+	@mv ./build/Debug/SCOP.exe ./SCOP.exe
 	@echo [SUCCESS] $@ compiled successfully!
 
 clean :
@@ -13,7 +13,7 @@ clean :
 	@echo [CLEAN] Object files have been removed!
 
 fclean : clean
-	@rm -rf $(NAME)
+	@rm -rf SCOP.exe
 	@echo [FCLEAN] Executable files have been fully removed!
 
 re : fclean all
