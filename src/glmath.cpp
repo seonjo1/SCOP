@@ -2,6 +2,9 @@
 
 // class vec2
 
+glmath::vec2::vec2(float x)
+	: x(x), y(x) {};
+
 glmath::vec2::vec2(float x, float y)
 	: x(x), y(y) {};
 
