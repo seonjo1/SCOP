@@ -83,6 +83,19 @@ public:
 	vec4 operator[](int idx) const;
 };
 
+vec2 operator*(float scalar, const vec2& vector);
+vec2 operator*(const vec2& vector, float scalar);
+
+vec3 operator*(float scalar, const vec3& vector);
+vec3 operator*(const vec3& vector, float scalar);
+
+vec4 operator*(float scalar, const vec4& vector);
+vec4 operator*(const vec4& vector, float scalar);
+
+mat4 operator*(float scalar, const mat4& matrix);
+mat4 operator*(const mat4& matrix, float scalar);
+
 }
+
 
 #endif
