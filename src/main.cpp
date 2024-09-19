@@ -28,13 +28,9 @@ int main(int argc, const char** argv) {
         return -1;
 	}
 
-    // ... glfwInit() 호출 후
-
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);;
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-
-    // ... glfwCreateWindow() 호출 전
 
 	 // glfw 윈도우 생성, 실패하면 에러 출력후 종료
     SPDLOG_INFO("Create glfw window");
