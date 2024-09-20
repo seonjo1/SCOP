@@ -94,6 +94,7 @@ vec3 operator*(const vec3& vector, float scalar);
 
 vec4 operator*(float scalar, const vec4& vector);
 vec4 operator*(const vec4& vector, float scalar);
+vec4 operator*(const mat4& matrix, const vec4& vector);
 
 mat4 operator*(float scalar, const mat4& matrix);
 mat4 operator*(const mat4& matrix, float scalar);
@@ -112,6 +113,8 @@ vec3 cross(const vec3& vector1, const vec3& vector2);
 vec2 normalize(const vec2& vector);
 vec3 normalize(const vec3& vector);
 vec4 normalize(const vec4& vector);
+
+float radians(float degree);
 
 }
 
