@@ -393,3 +393,10 @@ glmath::mat4 glmath::rotate(const glmath::mat4& matrix, float theta, const glmat
 								glmath::vec4(0.0f, 0.0f, 0.0f, 1.0f));	
 	return matrix * rotateMatrix;
 }
+
+glmath::mat4 glmath::perspective(float fovy, float aspect, float zNear, float zFar) {
+	return glmath::mat4(glmath::vec4(1 / (aspect * tan(fovy / 2)), 0.0f, 0.0f, 0.0f),
+						glmath::vec4(0.0f, 1 / tan(fovy / 2), 0.0f, 0.0f),
+						glmath::vec4(0.0f, 0.0f, (zFar + zNear) / (zNear - zFar), -1.0f),
+						glmath::vec4(0.0f, 0.0f, (2 * zFar * zNear) / (zNear - zFar), 0.0f));
+}
