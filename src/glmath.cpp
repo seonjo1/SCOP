@@ -359,3 +359,11 @@ glmath::vec4 glmath::normalize(const glmath::vec4& vector) {
 float glmath::radians(float degree) {
     return degree * (3.14159f / 180.0f);
 }
+
+glmath::mat4 glmath::scale(const glmath::mat4& matrix, const glmath::vec3& vector) {
+	glmath::mat4 scaleMatrix(glmath::vec4(vector.x, 0.0f, 0.0f, 0.0f),
+							glmath::vec4(0.0f, vector.y, 0.0f, 0.0f),
+							glmath::vec4(0.0f, 0.0f, vector.z, 0.0f),
+							glmath::vec4(0.0f, 0.0f, 0.0f, 1.0f));
+	return scaleMatrix * matrix;
+}
