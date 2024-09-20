@@ -375,3 +375,21 @@ glmath::mat4 glmath::translate(const glmath::mat4& matrix, const glmath::vec3& v
 								glmath::vec4(vector.x, vector.y, vector.z, 1.0f));
 	return matrix * translateMatrix;
 }
+
+glmath::mat4 glmath::rotate(const glmath::mat4& matrix, float theta, const glmath::vec3& vector) {
+	glmath::vec3 a = glmath::normalize(vector);
+	glmath::mat4 rotateMatrix(glmath::vec4(cos(theta) + (1 - cos(theta)) * a.x * a.x,
+											(1 - cos(theta)) * a.y * a.x + sin(theta) * a.z,
+											(1 - cos(theta)) * a.z * a.x - sin(theta) * a.y,
+											0.0f),
+								glmath::vec4((1 - cos(theta)) * a.x * a.y - sin(theta) * a.z,
+											cos(theta) + (1 - cos(theta)) * a.y * a.y,
+											(1 - cos(theta)) * a.z * a.y + sin(theta) * a.x,
+											0.0f),	
+								glmath::vec4((1 - cos(theta)) * a.x * a.z + sin(theta) * a.y,
+											(1 - cos(theta)) * a.y * a.z - sin(theta) * a.x,
+											cos(theta) + (1 - cos(theta)) * a.z * a.z,
+											0.0f),
+								glmath::vec4(0.0f, 0.0f, 0.0f, 1.0f));	
+	return matrix * rotateMatrix;
+}
