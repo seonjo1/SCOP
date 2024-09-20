@@ -107,7 +107,6 @@ float* value_ptr(mat4& matrix);
 float dot(const vec2& vector1, const vec2& vector2);
 float dot(const vec3& vector1, const vec3& vector2);
 float dot(const vec4& vector1, const vec4& vector2);
-
 vec3 cross(const vec3& vector1, const vec3& vector2);
 
 vec2 normalize(const vec2& vector);
@@ -115,6 +114,8 @@ vec3 normalize(const vec3& vector);
 vec4 normalize(const vec4& vector);
 
 float radians(float degree);
+
+mat4 scale(const mat4& matrix, const vec3& vector);
 
 }
 
