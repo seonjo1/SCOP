@@ -220,11 +220,7 @@ glmath::mat4 glmath::mat4::operator-(const mat4& rhs) const {
 glmath::mat4 glmath::mat4::operator*(const mat4& rhs) const {
 	glmath::mat4 ret(0.0f);
 	for (int i = 0; i < 4; i++) {
-		for (int j = 0; j < 4; j++) {
-			for (int k = 0; k < 4; k++) {
-				ret[j][i] += (*this)[k][i] * rhs[j][k];
-			}
-		}
+		ret[i] = (*this) * rhs[i];
 	}
 	return ret;
 }
@@ -267,6 +263,15 @@ glmath::vec4 glmath::operator*(const glmath::vec4& vector, float scalar) {
 	return glmath::vec4(scalar * vector.x, scalar * vector.y, scalar * vector.z, scalar * vector.w);
 }
 
+glmath::vec4 glmath::operator*(const glmath::mat4& matrix, const glmath::vec4& vector) {
+	glmath::vec4 ret(0.0f);
+	for (int i = 0; i < 4; i++) {
+		for (int j = 0; j < 4; j++) {
+			ret[i] += matrix[j][i] * vector[j];
+		}
+	}
+	return ret;
+}
 
 glmath::mat4 glmath::operator*(float scalar, const glmath::mat4& matrix) {
 	return glmath::mat4({scalar * matrix[0], scalar * matrix[1], scalar * matrix[2], scalar * matrix[3]});
@@ -349,4 +354,8 @@ glmath::vec4 glmath::normalize(const glmath::vec4& vector) {
 	}
 	magnitude = sqrt(magnitude);
 	return glmath::vec4(vector.x / magnitude, vector.y / magnitude, vector.z / magnitude, vector.w / magnitude);
+}
+
+float glmath::radians(float degree) {
+    return degree * (3.14159f / 180.0f);
 }
