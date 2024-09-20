@@ -365,5 +365,13 @@ glmath::mat4 glmath::scale(const glmath::mat4& matrix, const glmath::vec3& vecto
 							glmath::vec4(0.0f, vector.y, 0.0f, 0.0f),
 							glmath::vec4(0.0f, 0.0f, vector.z, 0.0f),
 							glmath::vec4(0.0f, 0.0f, 0.0f, 1.0f));
-	return scaleMatrix * matrix;
+	return matrix * scaleMatrix;
+}
+
+glmath::mat4 glmath::translate(const glmath::mat4& matrix, const glmath::vec3& vector) {
+	glmath::mat4 translateMatrix(glmath::vec4(1.0f, 0.0f, 0.0f, 0.0f),
+								glmath::vec4(0.0f, 1.0f, 0.0f, 0.0f),	
+								glmath::vec4(0.0f, 0.0f, 1.0f, 0.0f),
+								glmath::vec4(vector.x, vector.y, vector.z, 1.0f));
+	return matrix * translateMatrix;
 }
