@@ -400,3 +400,16 @@ glmath::mat4 glmath::perspective(float fovy, float aspect, float zNear, float zF
 						glmath::vec4(0.0f, 0.0f, (zFar + zNear) / (zNear - zFar), -1.0f),
 						glmath::vec4(0.0f, 0.0f, (2 * zFar * zNear) / (zNear - zFar), 0.0f));
 }
+
+glmath::mat4 glmath::lookAt(glmath::vec3 cameraPos, glmath::vec3 cameraTarget, glmath::vec3 cameraUp) {
+	glmath::vec3 cameraZ = glmath::normalize(cameraPos - cameraTarget);
+	glmath::vec3 cameraX = glmath::normalize(glmath::cross(cameraUp, cameraZ));
+	glmath::vec3 cameraY = glmath::cross(cameraZ, cameraX);
+	return glmath::mat4(glmath::vec4(cameraX.x, cameraX.y, cameraX.z, 0.0f),
+						glmath::vec4(cameraY.x, cameraY.y, cameraY.z, 0.0f),
+						glmath::vec4(cameraZ.x, cameraZ.y, cameraZ.z, 0.0f),
+						glmath::vec4(-glmath::dot(cameraPos, cameraX),
+									-glmath::dot(cameraPos, cameraY),
+									-glmath::dot(cameraPos, cameraZ),
+									1.0f));
+}
