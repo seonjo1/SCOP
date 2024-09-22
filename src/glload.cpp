@@ -47,6 +47,11 @@ std::unique_ptr<uint8_t[]> glload::loadBmpImg(const char* fileName, int* width, 
 		return nullptr;
 	}
 
+	if (imgBitCount <= 8) {
+		std::cerr << "Palette-based BMP files are not supported." << std::endl;
+		return nullptr;
+	}
+
 	if (!imgSize) {
 		imgSize = std::abs(imgWidth * imgHeight * (imgBitCount / 8));
 	}
