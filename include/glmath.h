@@ -9,8 +9,6 @@ namespace glmath{
 constexpr float pi = 3.14159f;
 
 class vec2 {
-private:
-
 public:
 	float x;
 	float y;
@@ -28,8 +26,6 @@ public:
 };
 
 class vec3 {
-private:
-
 public:
 	float x;
 	float y;
@@ -48,8 +44,6 @@ public:
 };
 
 class vec4 {
-private:
-
 public:
 	float x;
 	float y;
@@ -69,8 +63,6 @@ public:
 };
 
 class mat4 {
-private:
-
 public:
 	vec4 data[4];
 
