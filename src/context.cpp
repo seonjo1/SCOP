@@ -123,7 +123,6 @@ bool Context::init() {
 	GLenum format = GL_RGBA;
 	switch (m_texChannelCount) {
 		default: break;
-		case 1: format = GL_RED; break;
 		case 2: format = GL_RG; break;
 		case 3: format = GL_BGR; break;
 	}
