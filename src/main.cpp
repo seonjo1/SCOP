@@ -1,7 +1,9 @@
 #include "../include/scop.h"
+#include "../include/context.h"
 
 void OnFramebufferSizeChange(GLFWwindow* window, int width, int height) {
-	glViewport(0, 0, width, height);
+	Context* context = (Context *)glfwGetWindowUserPointer(window);
+	context->Reshape(width, height);
 }
 
 void OnKeyEvent(GLFWwindow* window, int key, int scancode, int action, int mods) {
@@ -10,21 +12,15 @@ void OnKeyEvent(GLFWwindow* window, int key, int scancode, int action, int mods)
 	}
 }
 
-void Render() {
-	glClearColor(0.1f, 0.2f, 0.3f, 0.0f);
-	glClear(GL_COLOR_BUFFER_BIT);
-}
-
 int main(int argc, const char** argv) {
-	// 시작을 알리는 로그
-	SPDLOG_INFO("Start program");
 
-	// glfw 라이브러리 초기화, 실패하면 에러 출력후 종료
-	SPDLOG_INFO("Initialize glfw");
+	std::cout << "Start program" << std::endl;
+
+	std::cout << "Initialize glfw" << std::endl;
 	if (!glfwInit()) {
 		const char* description = nullptr;
 		glfwGetError(&description);
-		SPDLOG_ERROR("failed to initialize glfw: {}", description);
+		std::cerr << "failed to initialize glfw: " << description << std::endl;
 		return -1;
 	}
 
@@ -32,35 +28,38 @@ int main(int argc, const char** argv) {
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);;
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-	 // glfw 윈도우 생성, 실패하면 에러 출력후 종료
-	SPDLOG_INFO("Create glfw window");
+	std::cout << "Create glfw window" << std::endl;
 	auto window = glfwCreateWindow(WINDOW_WIDTH, WINDOW_HEIGHT, WINDOW_NAME, nullptr, nullptr);
 	if (!window) {
-		SPDLOG_ERROR("failed to create glfw window");
+		std::cerr << "failed to create glfw window" << std::endl;
 		glfwTerminate();
 		return -1;
 	}
 	
 	glfwMakeContextCurrent(window);
 
-	// glad를 활용한 OpenGL 함수 로딩
 	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
-		SPDLOG_ERROR("failed to initialize glad");
+		std::cerr << "failed to initialize glad" << std::endl;
 		glfwTerminate();
 		return -1;
 	}
-	
-	// ... context 지정 부분
+
+	std::unique_ptr<Context> context = Context::Create();
+	if (!context) {
+		std::cout << "failed to create context" << std::endl;
+		glfwTerminate();
+		return -1;
+	}
+	glfwSetWindowUserPointer(window, context.get());
 
 	OnFramebufferSizeChange(window, WINDOW_WIDTH, WINDOW_HEIGHT);
 	glfwSetFramebufferSizeCallback(window, OnFramebufferSizeChange);
 	glfwSetKeyCallback(window, OnKeyEvent);
 
-
-	SPDLOG_INFO("Start main loop");
+	std::cout << "Start main loop" << std::endl;
 	while (!glfwWindowShouldClose(window)) {
 		glfwPollEvents();
-		Render();
+		context->Render();
 		glfwSwapBuffers(window);
 	}
 
