@@ -9,6 +9,7 @@ public:
 	~Buffer();
 
 private:
+	Buffer() {};
 	void genBuffer(GLenum type, GLsizeiptr size, const void* data, GLenum usage);
 
 	uint32_t m_buffer{0};
