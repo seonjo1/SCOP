@@ -36,64 +36,22 @@ bool Context::init() {
 	m_elementBuffer = Buffer::create(GL_ELEMENT_ARRAY_BUFFER, sizeof(uint32_t) * 6,
 									indices, GL_STATIC_DRAW);
 
-	std::optional<std::string> loadVertexShaderFileResult = glload::loadShaderFile("./shader/simple.vs");
-	std::optional<std::string> loadFragmentShaderFileResult = glload::loadShaderFile("./shader/simple.fs");
-	
-	if (!loadVertexShaderFileResult.has_value() || !loadFragmentShaderFileResult.has_value()) {
-		return false;
-	}
+	m_vertexShader = Shader::create("./shader/simple.vs", GL_VERTEX_SHADER);
+	m_fragmentShader = Shader::create("./shader/simple.fs", GL_FRAGMENT_SHADER);
 
-	std::string vsCode = loadVertexShaderFileResult.value();
-	std::string fsCode = loadFragmentShaderFileResult.value();
-
-	int32_t vsCodeLen = vsCode.length();
-	int32_t fsCodeLen = fsCode.length();
-
-	const char* vsCodePtr = vsCode.c_str();
-	const char* fsCodePtr = fsCode.c_str();
-
-	m_vertexShader = glCreateShader(GL_VERTEX_SHADER);	
-	m_fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-
-	glShaderSource(m_vertexShader, 1, &vsCodePtr, &vsCodeLen);
-	glShaderSource(m_fragmentShader, 1, &fsCodePtr, &fsCodeLen);
-
-	glCompileShader(m_vertexShader);
-
-	int success = 0;
-
-	glGetShaderiv(m_vertexShader, GL_COMPILE_STATUS, &success);
-	
-	if (!success) {
-		char infoLog[1024];
-		glGetShaderInfoLog(m_vertexShader, 1024, nullptr, infoLog);
-		std::cout << "failed to compile vertex shader" << std::endl;
-		std::cout << "reason: " << infoLog << std::endl;
-		return false;
-	}
-	
-	glCompileShader(m_fragmentShader);
-
-	success = 0;
-
-	glGetShaderiv(m_fragmentShader, GL_COMPILE_STATUS, &success);
-		
-	if (!success) {
-		char infoLog[1024];
-		glGetShaderInfoLog(m_fragmentShader, 1024, nullptr, infoLog);
-		std::cout << "failed to compile fragment shader" << std::endl;
-		std::cout << "reason: " << infoLog << std::endl;
+	if (!m_vertexShader || !m_fragmentShader) {
+		std::cerr << "failed to load shader file" << std::endl;
 		return false;
 	}
 
 	m_program = glCreateProgram();
 
-	glAttachShader(m_program, m_vertexShader);
-	glAttachShader(m_program, m_fragmentShader);
+	glAttachShader(m_program, m_vertexShader->get());
+	glAttachShader(m_program, m_fragmentShader->get());
 	glLinkProgram(m_program);
 
 	
-	success = 0;
+	int success = 0;
 	glGetProgramiv(m_program, GL_LINK_STATUS, &success);
 	if (!success)
 	{
@@ -154,14 +112,6 @@ void Context::Render() {
 
 Context::~Context() {
 
-	if (m_vertexShader) {
-		glDeleteShader(m_vertexShader);
-	}
-
-	if (m_fragmentShader) {
-		glDeleteShader(m_fragmentShader);
-	}
-	
 	if (m_program) {
 		glDeleteProgram(m_program);
 	}
