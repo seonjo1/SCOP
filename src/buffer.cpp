@@ -9,7 +9,7 @@ std::shared_ptr<Buffer> Buffer::create(GLenum type, GLsizeiptr size,
 }
 
 Buffer::~Buffer() {
-	if (!m_buffer) {
+	if (m_buffer) {
 		glDeleteBuffers(1, &m_buffer);
 	}
 }
