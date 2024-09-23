@@ -22,9 +22,7 @@ void Texture::genTexture(std::shared_ptr<Image> image) {
 	glGenTextures(1, &m_texture);
 	bind();
 	setParam();
-
 	image->loadTexImageToGPU();
-
 	glGenerateMipmap(GL_TEXTURE_2D);
 }
 
