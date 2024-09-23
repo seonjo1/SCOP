@@ -7,6 +7,8 @@
 # include "program.h"
 # include "image.h"
 # include "texture.h"
+# include "mesh.h"
+
 class Context {
 public:
 	static std::unique_ptr<Context> create();
@@ -19,10 +21,8 @@ private:
 
 	int m_width {WINDOW_WIDTH};
 	int m_height {WINDOW_HEIGHT};
-	
-	std::unique_ptr<VertexArray> m_vertexArray;
-	std::shared_ptr<Buffer> m_vertexBuffer; 
-	std::shared_ptr<Buffer> m_elementBuffer; 
+
+	std::unique_ptr<Mesh> m_plane;	
 	std::unique_ptr<Program> m_program;
 	std::shared_ptr<Image> m_image;
 	std::unique_ptr<Texture> m_texture;

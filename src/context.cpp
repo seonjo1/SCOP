@@ -13,29 +13,8 @@ std::unique_ptr<Context> Context::create() {
 }
 
 bool Context::init() {
-
-	float vertices[] = { 
-		0.5f, 0.5f, 0.0f, 1.0f, 1.0f,
-		0.5f, -0.5f, 0.0f, 1.0f, 0.0f,
-		-0.5f, -0.5f, 0.0f, 0.0f, 0.0f,
-		-0.5f, 0.5f, 0.0f, 0.0f, 1.0f
-	};
-
-	uint32_t indices[] = {
-		0, 3, 1,
-		1, 3, 2,
-	};
-
-	m_vertexArray = VertexArray::create();
-	m_vertexBuffer = Buffer::create(GL_ARRAY_BUFFER, sizeof(float) * 20,
-									vertices, GL_STATIC_DRAW);
-
-	m_vertexArray->setAttribute(0, 3, sizeof(float) * 5, 0);
-	m_vertexArray->setAttribute(1, 2, sizeof(float) * 5, sizeof(float) * 3);
-
-	m_elementBuffer = Buffer::create(GL_ELEMENT_ARRAY_BUFFER, sizeof(uint32_t) * 6,
-									indices, GL_STATIC_DRAW);
-
+	
+	m_plane = Mesh::createPlane();
 	m_program = Program::create("./shader/simple.vs", "./shader/simple.fs");
 
 	if (!m_program) {
@@ -62,8 +41,7 @@ void Context::Render() {
 	m_program->useProgram();
 	m_program->setUniform("tex", 0);
 	m_program->setUniform("transform", transform);
-	m_vertexArray->bind();
 	m_texture->activeTexture(GL_TEXTURE0);
 	
-	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+	m_plane->draw();
 }
