@@ -26,7 +26,11 @@ bool Context::init() {
 		1, 3, 2,
 	};
 
-	
+	m_vertexArray = VertexArray::create();
+	if (!m_vertexArray) {
+		std::cerr << "failed to create Vertex Array Object" << "\n";
+		return false;
+	}
 
 	glGenBuffers(1, &m_vbo);
 	glBindBuffer(GL_ARRAY_BUFFER, m_vbo);
