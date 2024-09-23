@@ -44,7 +44,7 @@ int main(int argc, const char** argv) {
 		return -1;
 	}
 
-	std::unique_ptr<Context> context = Context::Create();
+	std::unique_ptr<Context> context = Context::create();
 	if (!context) {
 		std::cout << "failed to create context" << std::endl;
 		glfwTerminate();
