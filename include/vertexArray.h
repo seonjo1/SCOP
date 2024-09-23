@@ -8,11 +8,11 @@ public:
 	static std::unique_ptr<VertexArray> create();
 	~VertexArray();
 	void bind();
-	uint32_t get();
+	void setAttribute(GLuint index, GLint size, GLsizei stride, size_t pointer);
 
 private:
 	VertexArray() {};
-	bool genVao();
+	void genVao();
 
 	uint32_t m_vao{0};
 };
