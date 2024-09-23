@@ -8,7 +8,8 @@ set(WINDOW_WIDTH 1920)
 set(WINDOW_HEIGHT 1080)
 
 project(${PROJECT_NAME})
-set(SRC src/main.cpp src/context.cpp src/glload.cpp src/glmath.cpp)
+set(SRC src/main.cpp src/context.cpp src/glload.cpp src/glmath.cpp
+		src/vertexArray.cpp src/buffer.cpp)
 
 add_executable(${PROJECT_NAME} ${SRC})
 
