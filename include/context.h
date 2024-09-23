@@ -2,10 +2,10 @@
 # define CONTEXT_H
 
 # include "scop.h"
-
+# include "vertexArray.h"
 class Context {
 public:
-	static std::unique_ptr<Context> Create();
+	static std::unique_ptr<Context> create();
 	void Render();
 	void Reshape(int width, int height);
 	~Context();
@@ -17,7 +17,8 @@ private:
 	int m_width {WINDOW_WIDTH};
 	int m_height {WINDOW_HEIGHT};
 	
-	uint32_t m_vao{0};
+
+	std::unique_ptr<VertexArray> m_vertexArray;
 	uint32_t m_vbo{0};
 	uint32_t m_ebo{0};
 
