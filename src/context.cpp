@@ -27,24 +27,14 @@ bool Context::init() {
 	};
 
 	m_vertexArray = VertexArray::create();
-	if (!m_vertexArray) {
-		std::cerr << "failed to create Vertex Array Object" << "\n";
-		return false;
-	}
+	m_vertexBuffer = Buffer::create(GL_ARRAY_BUFFER, sizeof(float) * 20,
+									vertices, GL_STATIC_DRAW);
 
-	glGenBuffers(1, &m_vbo);
-	glBindBuffer(GL_ARRAY_BUFFER, m_vbo);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 20, vertices,  GL_STATIC_DRAW);
+	m_vertexArray->setAttribute(0, 3, sizeof(float) * 5, 0);
+	m_vertexArray->setAttribute(1, 2, sizeof(float) * 5, sizeof(float) * 3);
 
-	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 5, 0);
-
-	glEnableVertexAttribArray(1);
-	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 5, (const void*)(sizeof(float) * 3));
-
-	glGenBuffers(1, &m_ebo);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_ebo);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(uint32_t) * 6, indices,  GL_STATIC_DRAW);
+	m_elementBuffer = Buffer::create(GL_ELEMENT_ARRAY_BUFFER, sizeof(uint32_t) * 6,
+									indices, GL_STATIC_DRAW);
 
 	std::optional<std::string> loadVertexShaderFileResult = glload::loadShaderFile("./shader/simple.vs");
 	std::optional<std::string> loadFragmentShaderFileResult = glload::loadShaderFile("./shader/simple.fs");
@@ -151,7 +141,7 @@ void Context::Render() {
 	glClearColor(0.1f, 0.2f, 0.3f, 0.0f);
 	glClear(GL_COLOR_BUFFER_BIT);
 
-	glmath::mat4 model(1.0f);
+	glmath::mat4 model = glmath::scale(glmath::mat4(1.0f), glmath::vec3(2.0f));
 	glmath::mat4 view = glmath::lookAt(glmath::vec3(0.0f, 0.0f, -3.0f), glmath::vec3(0.0f, 0.0f, 0.0f), glmath::vec3(0.0f, 1.0f, 0.0f));
 	glmath::mat4 projection = glmath::perspective(glmath::radians(45.0f), (float)m_width / (float)m_height , 0.01f, 10.0f);
 	glmath::mat4 transform = projection * view * model;
@@ -163,14 +153,6 @@ void Context::Render() {
 }
 
 Context::~Context() {
-
-	if (m_vbo) {
-		glDeleteBuffers(1, &m_vbo);
-	}
-
-	if (m_ebo) {
-		glDeleteBuffers(1, &m_ebo);
-	}
 
 	if (m_vertexShader) {
 		glDeleteShader(m_vertexShader);
