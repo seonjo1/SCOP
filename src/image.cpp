@@ -15,3 +15,17 @@ bool Image::load(const char* fileName) {
 	}
 	return true;
 }
+
+void Image::loadTexImageToGPU() {
+
+	GLenum format = GL_BGRA;
+	
+	switch (m_channelCount) {
+		default: break;
+		case 2: format = GL_RG; break;
+		case 3: format = GL_BGR; break;
+	}
+
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, m_width, m_height,
+					0, format, GL_UNSIGNED_BYTE, m_image.get());
+}

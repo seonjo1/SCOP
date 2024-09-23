@@ -6,8 +6,10 @@
 class Image {
 public:
 	static std::shared_ptr<Image> create(const char* fileName);
+	void loadTexImageToGPU();
 
 private:
+	Image() {};
 	bool load(const char* fileName);
 
 	std::unique_ptr<uint8_t[]> m_image;
