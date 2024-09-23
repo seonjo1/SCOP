@@ -43,40 +43,14 @@ bool Context::init() {
 	}
 
 	m_image = Image::create("./image/sample.bmp");
+	m_texture = Texture::create(m_image);
 
-	glGenTextures(1, &m_texture);
-	glBindTexture(GL_TEXTURE_2D, m_texture);
-
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-
-	GLenum format = GL_RGBA;
-	switch (m_texChannelCount) {
-		default: break;
-		case 2: format = GL_RG; break;
-		case 3: format = GL_BGR; break;
-	}
-
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, m_texWidth, m_texHeight,
-					0, format, GL_UNSIGNED_BYTE, m_image.get());
-
-	glGenerateMipmap(GL_TEXTURE_2D);
-
-	glUseProgram(m_program->get());
-
-	
-	GLuint location = glGetUniformLocation(m_program->get(), "tex");
-	glUniform1i(location, 0);
-
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, m_texture);
 
 	return true;
 }
 
 void Context::Render() {
+
 	glClearColor(0.1f, 0.2f, 0.3f, 0.0f);
 	glClear(GL_COLOR_BUFFER_BIT);
 
@@ -85,14 +59,11 @@ void Context::Render() {
 	glmath::mat4 projection = glmath::perspective(glmath::radians(45.0f), (float)m_width / (float)m_height , 0.01f, 10.0f);
 	glmath::mat4 transform = projection * view * model;
 
-	GLuint location = glGetUniformLocation(m_program->get(), "transform");
-	glUniformMatrix4fv(location, 1, GL_FALSE, glmath::value_ptr(transform));
+	m_program->useProgram();
+	m_program->setUniform("tex", 0);
+	m_program->setUniform("transform", transform);
+	m_vertexArray->bind();
+	m_texture->activeTexture(GL_TEXTURE0);
 	
 	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-}
-
-Context::~Context() {
-	if (m_texture) {
-		glDeleteTextures(1, &m_texture);
-	}
 }
