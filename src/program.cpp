@@ -26,7 +26,7 @@ bool Program::link(const std::vector<std::shared_ptr<Shader>>& shaders){
 			std::cerr << "failed to load shader file" << std::endl;
 			return false;
 		}
-		glAttachShader(m_program, shader->get());
+		shader->attachShaderToProgram(m_program);
 	}
 
 	glLinkProgram(m_program);
