@@ -42,7 +42,7 @@ bool Context::init() {
 		return false;
 	}
 
-	m_image = glload::loadBmpImg("./image/sample.bmp", &m_texWidth, &m_texHeight, &m_texChannelCount);
+	m_image = Image::create("./image/sample.bmp");
 
 	glGenTextures(1, &m_texture);
 	glBindTexture(GL_TEXTURE_2D, m_texture);

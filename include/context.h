@@ -5,6 +5,7 @@
 # include "vertexArray.h"
 # include "buffer.h"
 # include "program.h"
+# include "image.h"
 
 class Context {
 public:
@@ -25,9 +26,9 @@ private:
 	std::shared_ptr<Buffer> m_vertexBuffer; 
 	std::shared_ptr<Buffer> m_elementBuffer; 
 	std::unique_ptr<Program> m_program;
+	std::shared_ptr<Image> m_image;
 
 	uint32_t m_texture{0};
-	std::unique_ptr<uint8_t[]> m_image;
 	int m_texWidth{0};
 	int m_texHeight{0};
 	int m_texChannelCount{0};
