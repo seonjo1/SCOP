@@ -2,9 +2,8 @@
 
 std::unique_ptr<VertexArray> VertexArray::create() {
 	std::unique_ptr<VertexArray> vertexArray(new VertexArray());
-	if (vertexArray->genVao()) {
-		return nullptr;
-	}
+	vertexArray->genVao();
+
 	return vertexArray;
 }
 
@@ -18,11 +17,13 @@ void VertexArray::bind() {
 	glBindVertexArray(m_vao);
 }
 
-bool VertexArray::genVao() {
+void VertexArray::genVao() {
 	glGenVertexArrays(1, &m_vao);
 	bind();
 }
 
-uint32_t VertexArray::get() {
-	return m_vao;
+void VertexArray::setAttribute(GLuint index, GLint size,
+								GLsizei stride, size_t pointer) {
+	glEnableVertexAttribArray(index);
+	glVertexAttribPointer(index, size, GL_FLOAT, GL_FALSE, stride, reinterpret_cast<const void*>(pointer));
 }
