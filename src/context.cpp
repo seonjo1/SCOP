@@ -6,7 +6,7 @@ void Context::Reshape(int width, int height) {
 	glViewport(0, 0, m_width, m_height);
 }
 
-std::unique_ptr<Context> Context::Create() {
+std::unique_ptr<Context> Context::create() {
 	std::unique_ptr<Context> context(new Context());
 	if (!context->init()) return nullptr;
 	return context;
@@ -26,8 +26,7 @@ bool Context::init() {
 		1, 3, 2,
 	};
 
-	glGenVertexArrays(1, &m_vao);
-	glBindVertexArray(m_vao);
+	
 
 	glGenBuffers(1, &m_vbo);
 	glBindBuffer(GL_ARRAY_BUFFER, m_vbo);
@@ -160,9 +159,6 @@ void Context::Render() {
 }
 
 Context::~Context() {
-	if (m_vao) {
-		glDeleteVertexArrays(1, &m_vao);
-	}
 
 	if (m_vbo) {
 		glDeleteBuffers(1, &m_vbo);
