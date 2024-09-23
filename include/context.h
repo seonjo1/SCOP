@@ -3,6 +3,8 @@
 
 # include "scop.h"
 # include "vertexArray.h"
+# include "buffer.h"
+
 class Context {
 public:
 	static std::unique_ptr<Context> create();
@@ -19,8 +21,8 @@ private:
 	
 
 	std::unique_ptr<VertexArray> m_vertexArray;
-	uint32_t m_vbo{0};
-	uint32_t m_ebo{0};
+	std::shared_ptr<Buffer> m_vertexBuffer; 
+	std::shared_ptr<Buffer> m_elementBuffer; 
 
 	uint32_t m_vertexShader{0};
 	uint32_t m_fragmentShader{0};
