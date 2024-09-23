@@ -36,28 +36,9 @@ bool Context::init() {
 	m_elementBuffer = Buffer::create(GL_ELEMENT_ARRAY_BUFFER, sizeof(uint32_t) * 6,
 									indices, GL_STATIC_DRAW);
 
-	m_vertexShader = Shader::create("./shader/simple.vs", GL_VERTEX_SHADER);
-	m_fragmentShader = Shader::create("./shader/simple.fs", GL_FRAGMENT_SHADER);
+	m_program = Program::create("./shader/simple.vs", "./shader/simple.fs");
 
-	if (!m_vertexShader || !m_fragmentShader) {
-		std::cerr << "failed to load shader file" << std::endl;
-		return false;
-	}
-
-	m_program = glCreateProgram();
-
-	glAttachShader(m_program, m_vertexShader->get());
-	glAttachShader(m_program, m_fragmentShader->get());
-	glLinkProgram(m_program);
-
-	
-	int success = 0;
-	glGetProgramiv(m_program, GL_LINK_STATUS, &success);
-	if (!success)
-	{
-		char infoLog[1024];
-		glGetProgramInfoLog(m_program, 1024, nullptr, infoLog);
-		std::cout << "failed to link program: " << infoLog << std::endl;
+	if (!m_program) {
 		return false;
 	}
 
@@ -83,10 +64,10 @@ bool Context::init() {
 
 	glGenerateMipmap(GL_TEXTURE_2D);
 
-	glUseProgram(m_program);
+	glUseProgram(m_program->get());
 
 	
-	GLuint location = glGetUniformLocation(m_program, "tex");
+	GLuint location = glGetUniformLocation(m_program->get(), "tex");
 	glUniform1i(location, 0);
 
 	glActiveTexture(GL_TEXTURE0);
@@ -104,18 +85,13 @@ void Context::Render() {
 	glmath::mat4 projection = glmath::perspective(glmath::radians(45.0f), (float)m_width / (float)m_height , 0.01f, 10.0f);
 	glmath::mat4 transform = projection * view * model;
 
-	GLuint location = glGetUniformLocation(m_program, "transform");
+	GLuint location = glGetUniformLocation(m_program->get(), "transform");
 	glUniformMatrix4fv(location, 1, GL_FALSE, glmath::value_ptr(transform));
 	
 	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 }
 
 Context::~Context() {
-
-	if (m_program) {
-		glDeleteProgram(m_program);
-	}
-	
 	if (m_texture) {
 		glDeleteTextures(1, &m_texture);
 	}

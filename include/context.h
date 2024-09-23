@@ -4,7 +4,7 @@
 # include "scop.h"
 # include "vertexArray.h"
 # include "buffer.h"
-# include "Shader.h"
+# include "program.h"
 
 class Context {
 public:
@@ -24,10 +24,8 @@ private:
 	std::unique_ptr<VertexArray> m_vertexArray;
 	std::shared_ptr<Buffer> m_vertexBuffer; 
 	std::shared_ptr<Buffer> m_elementBuffer; 
-	std::unique_ptr<Shader> m_vertexShader;
-	std::unique_ptr<Shader> m_fragmentShader;
+	std::unique_ptr<Program> m_program;
 
-	uint32_t m_program{0};
 	uint32_t m_texture{0};
 	std::unique_ptr<uint8_t[]> m_image;
 	int m_texWidth{0};
