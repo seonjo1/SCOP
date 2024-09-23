@@ -24,7 +24,6 @@ bool Context::init() {
 	m_image = Image::create("./image/sample.bmp");
 	m_texture = Texture::create(m_image);
 
-
 	return true;
 }
 
