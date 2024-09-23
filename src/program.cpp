@@ -44,6 +44,16 @@ bool Program::link(const std::vector<std::shared_ptr<Shader>>& shaders){
 	return true;
 }
 
-uint32_t Program::get() {
-	return m_program;
+void Program::useProgram() {
+	glUseProgram(m_program);
+}
+
+void Program::setUniform(const char* varName, GLint value) {
+	GLuint location = glGetUniformLocation(m_program, varName);
+	glUniform1i(location, value);
+}
+
+void Program::setUniform(const char* varName, glmath::mat4& matrix) {
+	GLuint location = glGetUniformLocation(m_program, varName);
+	glUniformMatrix4fv(location, 1, GL_FALSE, glmath::value_ptr(matrix));
 }
