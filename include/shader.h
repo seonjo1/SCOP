@@ -7,7 +7,7 @@ class Shader {
 public:
 	static std::unique_ptr<Shader> create(const std::string& filePath, GLenum type);
 	~Shader();
-	uint32_t get();
+	void attachShaderToProgram(uint32_t program);
 
 private:
 	Shader() {};

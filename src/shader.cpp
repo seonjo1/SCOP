@@ -8,8 +8,8 @@ std::unique_ptr<Shader> Shader::create(const std::string& filePath, GLenum type)
 	return shader;
 }
 
-uint32_t Shader::get() {
-	return m_shader;
+void Shader::attachShaderToProgram(uint32_t program) {
+	glAttachShader(program, m_shader);
 }
 
 Shader::~Shader() {
