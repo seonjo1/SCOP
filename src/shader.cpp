@@ -19,7 +19,7 @@ Shader::~Shader() {
 }
 
 bool Shader::load(const std::string& filePath, GLenum type) {
-	std::optional<std::string> loadShaderFileResult = glload::loadFile(filePath);
+	std::optional<std::string> loadShaderFileResult = glload::loadShaderFile(filePath);
 	if (!loadShaderFileResult.has_value()) {
 		return false;
 	}
