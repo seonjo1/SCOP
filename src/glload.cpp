@@ -88,12 +88,12 @@ std::unique_ptr<uint8_t[]> glload::loadBmpImg(const char* fileName, int* width, 
     return data;
 }
 
-std::optional<std::string> glload::loadShaderFile(const std::string& fileName) {
+std::optional<std::string> glload::loadFile(const std::string& fileName) {
 
 	std::ifstream fin(fileName);
 	
 	if (!fin.is_open()) {
-		std::cout << "failed to open shader file: " << fileName << std::endl;
+		std::cout << "failed to open file: " << fileName << std::endl;
 		return {};
 	}
 	
