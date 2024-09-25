@@ -14,32 +14,30 @@ bool Model::createMeshes(const std::string& fileName) {
 		std::cerr << fileName << " is invalid .obj file" << std::endl;
 		return false;
 	}
-	
-	std::cout << "vertex info\n";
+
+	std::vector<Vertex> vertices;
+	std::vector<uint32_t> indices;
+
 	for (int i = 0; i < objInfo->vertexInfo.vPosInfo.size(); i++) {
-		std::cout << "x: " << objInfo->vertexInfo.vPosInfo[i].x << " ";
-		std::cout << "y: " << objInfo->vertexInfo.vPosInfo[i].y << " ";
-		std::cout << "z: " << objInfo->vertexInfo.vPosInfo[i].z << "\n";
+		vertices.push_back(Vertex{glmath::vec3(objInfo->vertexInfo.vPosInfo[i].x,
+						   					   objInfo->vertexInfo.vPosInfo[i].y,
+						   					   objInfo->vertexInfo.vPosInfo[i].z),
+								  glmath::vec2(0.0f, 0.0f)});
 	}
-	std::cout << "\nindex info\n";
+
 	for (int j = 0; j < objInfo->indexInfo.faces.size(); j++) {
-		std::cout << "index 1: " << objInfo->indexInfo.faces[j].index[0] << " ";
-		std::cout << "index 2: " << objInfo->indexInfo.faces[j].index[1] << " ";
-		std::cout << "index 3: " << objInfo->indexInfo.faces[j].index[2] << "\n";
+		indices.push_back(objInfo->indexInfo.faces[j].index[0]);
+		indices.push_back(objInfo->indexInfo.faces[j].index[1]);
+		indices.push_back(objInfo->indexInfo.faces[j].index[2]);
 	}
-	std::cout << "\nmaterial info\n";
-	std::cout << "Ka.x: " << objInfo->marterialInfo.Ka[0] << "\n";
-	std::cout << "Ka.y: " << objInfo->marterialInfo.Ka[1] << "\n";
-	std::cout << "Ka.z: " << objInfo->marterialInfo.Ka[2] << "\n";
-	std::cout << "Kd.x: " << objInfo->marterialInfo.Kd[0] << "\n";
-	std::cout << "Kd.y: " << objInfo->marterialInfo.Kd[1] << "\n";
-	std::cout << "Kd.z: " << objInfo->marterialInfo.Kd[2] << "\n";
-	std::cout << "Ks.x: " << objInfo->marterialInfo.Ks[0] << "\n";
-	std::cout << "Ks.y: " << objInfo->marterialInfo.Ks[1] << "\n";
-	std::cout << "Ks.z: " << objInfo->marterialInfo.Ks[2] << "\n";
-	std::cout << "Ns: " << objInfo->marterialInfo.Ns << "\n";
-	std::cout << "Ni: " << objInfo->marterialInfo.Ni << "\n";
-	std::cout << "d: " << objInfo->marterialInfo.d << "\n";
-	std::cout << "illum: " << objInfo->marterialInfo.illum << "\n";
+
+	m_meshes.push_back(Mesh::createMesh(vertices, indices, objInfo.get()));
+	
 	return true;
+}
+
+void Model::draw() {
+	for (std::unique_ptr<Mesh>& mesh : m_meshes) {
+		mesh->draw();
+	}
 }
