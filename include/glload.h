@@ -13,6 +13,15 @@
 
 namespace glload {
 
+struct bmpInfo {
+	uint32_t imgOffBits;
+	uint32_t imgSize;
+	int32_t imgWidth;
+	int32_t imgHeight;
+	uint16_t imgBitCount;
+	uint32_t imgCompression;
+};
+
 struct Pos {
 	float x;
 	float y;
@@ -107,12 +116,13 @@ private:
 	std::stringstream& ss;
 };
 
+void flipImageVertically(int h, int w, int bpp, uint8_t* data);
+bool getBmpInfo(char* fileHeader, bmpInfo& info);
 bool checkFileExtension(std::string fileName, const std::string extension);
 std::unique_ptr<uint8_t[]> loadBmpImg(const char* fileName, int* width, int* height, int* channelCount);
 std::optional<std::string> loadShaderFile(const std::string& fileName);
 std::unique_ptr<ObjInfo> loadObjFile(const std::string& fileName);
 std::unique_ptr<IObjLine> generateLine(std::stringstream& ss, const std::string& fileName);
-
 }
 
 #endif

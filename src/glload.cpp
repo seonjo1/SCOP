@@ -1,5 +1,17 @@
 #include "../include/glload.h"
 
+void glload::flipImageVertically(int h, int w, int bpp, uint8_t* data) {
+	int rowSize = w * (bpp / 8);
+	std::vector<uint8_t> tmp(rowSize);
+	for (int i = 0; i < h / 2; i++) {
+		uint8_t* upperRow = &data[i * rowSize];
+		uint8_t* lowerRow = &data[((h - 1) - i) * rowSize];
+		std::copy(upperRow, upperRow + rowSize, tmp.begin());
+		std::copy(lowerRow, lowerRow + rowSize, upperRow);
+		std::copy(tmp.begin(), tmp.end(), lowerRow);
+	}
+}
+
 bool glload::checkFileExtension(std::string fileName, const std::string extension) {
 
 	int length = fileName.size();
@@ -13,6 +25,32 @@ bool glload::checkFileExtension(std::string fileName, const std::string extensio
 	
 	return fileExt == extension;
 }
+
+bool glload::getBmpInfo(char* fileHeader, bmpInfo& info) {
+
+	info.imgOffBits = *reinterpret_cast<uint32_t*>(&fileHeader[10]);
+	info.imgSize = *reinterpret_cast<uint32_t*>(&fileHeader[34]);
+	info.imgWidth = *reinterpret_cast<int32_t*>(&fileHeader[18]);
+	info.imgHeight = *reinterpret_cast<int32_t*>(&fileHeader[22]);
+	info.imgBitCount = *reinterpret_cast<uint16_t*>(&fileHeader[28]);
+	info.imgCompression = *reinterpret_cast<uint32_t*>(&fileHeader[30]);
+
+	if (info.imgCompression) {
+		std::cerr << "this bmp file is compressed" << std::endl;
+		return false;
+	}
+
+	if (info.imgBitCount <= 8) {
+		std::cerr << "Palette-based BMP files are not supported." << std::endl;
+		return false;
+	}
+
+	if (!info.imgSize) {
+		info.imgSize = std::abs(info.imgWidth * info.imgHeight * (info.imgBitCount / 8));
+	}
+	return true;
+}
+
 
 std::unique_ptr<uint8_t[]> glload::loadBmpImg(const char* fileName, int* width, int* height, int* channelCount) {
 
@@ -35,55 +73,28 @@ std::unique_ptr<uint8_t[]> glload::loadBmpImg(const char* fileName, int* width, 
         return nullptr;
     }
 
-	uint32_t imgOffBits = *reinterpret_cast<uint32_t*>(&fileHeader[10]);
-	uint32_t imgSize = *reinterpret_cast<uint32_t*>(&fileHeader[34]);
-	int32_t imgWidth = *reinterpret_cast<int32_t*>(&fileHeader[18]);
-	int32_t imgHeight = *reinterpret_cast<int32_t*>(&fileHeader[22]);
-	uint16_t imgBitCount = *reinterpret_cast<uint16_t*>(&fileHeader[28]);
-	uint32_t imgCompression = *reinterpret_cast<uint32_t*>(&fileHeader[30]);
-
-	if (imgCompression) {
-		std::cerr << "this bmp file is compressed" << std::endl;
+	bmpInfo info;
+	if (!getBmpInfo(fileHeader, info)) {
 		return nullptr;
 	}
 
-	if (imgBitCount <= 8) {
-		std::cerr << "Palette-based BMP files are not supported." << std::endl;
-		return nullptr;
-	}
+    std::unique_ptr<uint8_t[]> data = std::make_unique<uint8_t[]>(info.imgSize);
 
-	if (!imgSize) {
-		imgSize = std::abs(imgWidth * imgHeight * (imgBitCount / 8));
-	}
-
-    std::unique_ptr<uint8_t[]> data = std::make_unique<uint8_t[]>(imgSize);
-
-    fin.seekg(imgOffBits, std::ios::beg);
-    fin.read(reinterpret_cast<char*>(data.get()), imgSize);
+    fin.seekg(info.imgOffBits, std::ios::beg);
+    fin.read(reinterpret_cast<char*>(data.get()), info.imgSize);
 	
 	if (fin.fail()) {
 		std::cerr << "Error: Could not read the BMP image data." << std::endl;
 		return nullptr;
 	}
 	
-	if (imgHeight < 0) {
-		imgHeight = -imgHeight;
-		int rowSize = imgWidth * (imgBitCount / 8);
-		std::vector<uint8_t> tmp(rowSize);
-		for (int i = 0; i < imgHeight / 2; i++) {
-			uint8_t* upperRow = &data[i * rowSize];
-			uint8_t* lowerRow = &data[((imgHeight - 1) - i) * rowSize];
-			std::copy(upperRow, upperRow + rowSize, tmp.begin());
-			std::copy(lowerRow, lowerRow + rowSize, upperRow);
-			std::copy(tmp.begin(), tmp.end(), lowerRow);
-		}
+	if (info.imgHeight < 0) {
+		flipImageVertically(-info.imgHeight, info.imgWidth, info.imgBitCount, data.get());
 	}
 
-	*width = imgWidth;
-	*height = imgHeight;
-	*channelCount =  imgBitCount / 8;
-
-	fin.close();
+	*width = info.imgWidth;
+	*height = std::abs(info.imgHeight);
+	*channelCount =  info.imgBitCount / 8;
 
     return data;
 }
