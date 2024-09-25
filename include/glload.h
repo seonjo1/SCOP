@@ -107,7 +107,7 @@ private:
 	std::stringstream& ss;
 };
 
-bool isBmpFile(std::string fileName);
+bool checkFileExtension(std::string fileName, const std::string extension);
 std::unique_ptr<uint8_t[]> loadBmpImg(const char* fileName, int* width, int* height, int* channelCount);
 std::optional<std::string> loadShaderFile(const std::string& fileName);
 std::unique_ptr<ObjInfo> loadObjFile(const std::string& fileName);

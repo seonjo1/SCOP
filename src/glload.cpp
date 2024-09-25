@@ -1,23 +1,23 @@
 #include "../include/glload.h"
 
-bool glload::isBmpFile(std::string fileName) {
+bool glload::checkFileExtension(std::string fileName, const std::string extension) {
 
 	int length = fileName.size();
 	
-	if (length < 4) {
+	if (length < extension.size()) {
 		return false;
 	}
 	
-	std::string ext = fileName.substr(length - 4);
-	std::transform(ext.begin(), ext.end(), ext.begin(), ::tolower);
+	std::string fileExt = fileName.substr(length - 4);
+	std::transform(fileExt.begin(), fileExt.end(), fileExt.begin(), ::tolower);
 	
-	return ext == ".bmp";
+	return fileExt == extension;
 }
 
 std::unique_ptr<uint8_t[]> glload::loadBmpImg(const char* fileName, int* width, int* height, int* channelCount) {
 
-	if (!isBmpFile(fileName)) {
-		std::cerr << "this file is not bmp format" << std::endl;
+	if (!checkFileExtension(fileName, ".bmp")) {
+		std::cerr << "this file is not bmp file" << std::endl;
 		return nullptr;
 	}
 
@@ -106,11 +106,16 @@ std::optional<std::string> glload::loadShaderFile(const std::string& fileName) {
 
 std::unique_ptr<glload::ObjInfo> glload::loadObjFile(const std::string& fileName) {
 
+	if (!checkFileExtension(fileName, ".obj")) {
+		std::cerr << "this file is not .obj file" << std::endl;
+		return nullptr;
+	}
+
 	std::ifstream fin(fileName);
 	
 	if (!fin.is_open()) {
 		std::cerr << fileName << " is not exist" << std::endl;
-		return {};
+		return nullptr;
 	}
 
 	std::unique_ptr<ObjInfo> objInfo(new ObjInfo());
@@ -173,6 +178,12 @@ bool glload::MaterialLine::parsingLine(ObjInfo* objInfo) {
 	if (!(ss >> mtlFileName)) {
 		return false;
 	}
+
+	if (!checkFileExtension(mtlFileName, ".mtl")) {
+		std::cerr << "this file is not .mtl file" << std::endl;
+		return false;
+	}
+
 
 	std::string mtlFilePath = getMtlFilePath(mtlFileName);
 
