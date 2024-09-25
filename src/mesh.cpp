@@ -11,11 +11,20 @@ std::unique_ptr<Mesh> Mesh::createPlane() {
 									 1, 3, 2 };
 									 
 	std::unique_ptr<Mesh> mesh(new Mesh());
-	mesh->create(vertices, indices);
+	mesh->init(vertices, indices);
 	return mesh;
 }
 
-void Mesh::create(std::vector<Vertex>& vertices, std::vector<uint32_t>& indices) {
+
+std::unique_ptr<Mesh> Mesh::createMesh(std::vector<Vertex>& vertices,
+										std::vector<uint32_t>& indices, 
+										glload::ObjInfo* objInfo) {
+	std::unique_ptr<Mesh> mesh(new Mesh());
+	mesh->init(vertices, indices, objInfo);
+	return mesh;
+}
+
+void Mesh::init(std::vector<Vertex>& vertices, std::vector<uint32_t>& indices, glload::ObjInfo* objInfo) {
 
 	GLsizei vertexSize = vertices.size();
 	m_elementSize = indices.size();
@@ -35,3 +44,5 @@ void Mesh::draw() {
 	m_vertexArray->bind();
 	glDrawElements(GL_TRIANGLES, m_elementSize, GL_UNSIGNED_INT, 0);
 }
+
+Mesh::Mesh(const Material& material) : m_material(material) {};
