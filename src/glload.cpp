@@ -103,3 +103,7 @@ std::optional<std::string> glload::loadShaderFile(const std::string& fileName) {
 
 	return code.str();
 }
+
+glload::ObjInfo glload::loadObjFile(const std::string& fileName) {
+	
+}
