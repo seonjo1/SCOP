@@ -8,6 +8,7 @@
 # include "image.h"
 # include "texture.h"
 # include "mesh.h"
+# include "model.h"
 
 class Context {
 public:
@@ -22,7 +23,8 @@ private:
 	int m_width {WINDOW_WIDTH};
 	int m_height {WINDOW_HEIGHT};
 
-	std::unique_ptr<Mesh> m_plane;	
+	std::unique_ptr<Mesh> m_plane;
+	std::unique_ptr<Model> m_model;
 	std::unique_ptr<Program> m_program;
 	std::shared_ptr<Image> m_image;
 	std::unique_ptr<Texture> m_texture;

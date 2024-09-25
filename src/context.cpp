@@ -15,6 +15,7 @@ std::unique_ptr<Context> Context::create() {
 bool Context::init() {
 	
 	m_plane = Mesh::createPlane();
+	m_model = Model::create("./object/42.obj");
 	m_program = Program::create("./shader/simple.vs", "./shader/simple.fs");
 
 	if (!m_program) {
