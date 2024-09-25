@@ -14,7 +14,6 @@ std::unique_ptr<Context> Context::create() {
 
 bool Context::init() {
 	
-	m_plane = Mesh::createPlane();
 	m_model = Model::create("./object/42.obj");
 	m_program = Program::create("./shader/simple.vs", "./shader/simple.fs");
 
@@ -25,16 +24,19 @@ bool Context::init() {
 	m_image = Image::create("./image/sample.bmp");
 	m_texture = Texture::create(m_image);
 
+	glEnable(GL_DEPTH_TEST);
+
 	return true;
 }
 
 void Context::Render() {
 
 	glClearColor(0.1f, 0.2f, 0.3f, 0.0f);
-	glClear(GL_COLOR_BUFFER_BIT);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
 
 	glmath::mat4 model = glmath::scale(glmath::mat4(1.0f), glmath::vec3(2.0f));
-	glmath::mat4 view = glmath::lookAt(glmath::vec3(0.0f, 0.0f, -3.0f), glmath::vec3(0.0f, 0.0f, 0.0f), glmath::vec3(0.0f, 1.0f, 0.0f));
+	glmath::mat4 view = glmath::lookAt(glmath::vec3(-10.0f, 0.0f, 0.0f), glmath::vec3(0.0f, 0.0f, 0.0f), glmath::vec3(0.0f, 1.0f, 0.0f));
 	glmath::mat4 projection = glmath::perspective(glmath::radians(45.0f), (float)m_width / (float)m_height , 0.01f, 10.0f);
 	glmath::mat4 transform = projection * view * model;
 
@@ -43,5 +45,5 @@ void Context::Render() {
 	m_program->setUniform("transform", transform);
 	m_texture->activeTexture(GL_TEXTURE0);
 	
-	m_plane->draw();
+	m_model->draw();
 }
