@@ -104,6 +104,139 @@ std::optional<std::string> glload::loadShaderFile(const std::string& fileName) {
 	return code.str();
 }
 
-glload::ObjInfo glload::loadObjFile(const std::string& fileName) {
+std::unique_ptr<glload::ObjInfo> glload::loadObjFile(const std::string& fileName) {
+
+	std::ifstream fin(fileName);
 	
+	if (!fin.is_open()) {
+		std::cerr << fileName << " is not exist" << std::endl;
+		return {};
+	}
+
+	std::unique_ptr<ObjInfo> objInfo(new ObjInfo());
+	std::string line;
+	while (std::getline(fin, line)) {
+		std::cout << "line: " << line << "\n";
+		std::stringstream ss(line);
+		std::unique_ptr<IObjLine> objLine = generateLine(ss, fileName);
+		if (!objLine) { continue ;}
+		if (!objLine->parsingLine(objInfo.get())) { return {}; }
+	}
+
+	return objInfo;
+}
+
+std::unique_ptr<glload::IObjLine> glload::generateLine(std::stringstream& ss, const std::string& fileName) {
+	std::string element;
+	ss >> element;
+	if (element == "v") return std::unique_ptr<IObjLine>(new VertexLine(ss, fileName));
+	else if (element == "mtllib") return std::unique_ptr<IObjLine>(new MaterialLine(ss, fileName)); 
+	else if (element == "f") return std::unique_ptr<IObjLine>(new FaceLine(ss, fileName));
+	else return nullptr;
+}
+
+glload::VertexLine::VertexLine(std::stringstream& ss,  const std::string& fileName)
+	: ss(ss) {};
+
+glload::MaterialLine::MaterialLine(std::stringstream& ss,  const std::string& fileName)
+	: ss(ss), fileName(fileName) {}
+
+glload::FaceLine::FaceLine(std::stringstream& ss,  const std::string& fileName)
+	: ss(ss) {};
+
+bool glload::VertexLine::parsingLine(ObjInfo* objInfo) {
+	std::vector<float> v;
+	float value;
+	
+	while (this->ss >> value) {
+		v.push_back(value);
+	}
+	
+	if (v.size() != 3) return false;
+
+	objInfo->vertexInfo.vPosInfo.push_back(Pos(v[0], v[1], v[2]));
+	return true;
+}
+
+std::string glload::MaterialLine::getMtlFilePath(const std::string& mtlFileName) {
+	std::string prefix = "";
+	std::size_t pos = fileName.rfind('/');
+	if (pos != std::string::npos) {
+		prefix = fileName.substr(0, pos + 1);
+	}
+	return prefix + mtlFileName;
+}
+
+
+bool glload::MaterialLine::parsingLine(ObjInfo* objInfo) {
+
+	std::string mtlFileName;
+	if (!(ss >> mtlFileName)) {
+		return false;
+	}
+
+	std::string mtlFilePath = getMtlFilePath(mtlFileName);
+
+	std::cout << "mtlFileName: " << mtlFileName << "\n";
+	std::ifstream fin(mtlFilePath);
+	
+	if (!fin.is_open()) {
+		return false;
+	}
+
+	std::string line, identifier;
+	float fVal;
+	uint32_t iVal;
+	while (std::getline(fin, line)) {
+		std::stringstream ss(line);
+		std::cout << "material line: " << line << "\n";
+		if (!(ss >> identifier)) {
+			continue ;
+		}
+		if (identifier == "Ka") {
+			for (int i = 0; i < 3; i++) {
+				if (!(ss >> fVal)) return false;
+				objInfo->marterialInfo.Ka[i] = fVal;
+			}
+		} else if (identifier == "Kd") {
+			for (int i = 0; i < 3; i++) {
+				if (!(ss >> fVal)) return false;
+				objInfo->marterialInfo.Kd[i] = fVal;
+			}
+		} else if (identifier == "Ks") {
+			for (int i = 0; i < 3; i++) {
+				if (!(ss >> fVal)) return false;
+				objInfo->marterialInfo.Ks[i] = fVal;
+			}
+		} else if (identifier == "Ns") {
+			if (!(ss >> fVal)) return false;
+			objInfo->marterialInfo.Ns = fVal;
+		} else if (identifier == "Ni") {
+			if (!(ss >> fVal)) return false;
+			objInfo->marterialInfo.Ni = fVal;
+		} else if (identifier == "d") {
+			if (!(ss >> fVal)) return false;
+			objInfo->marterialInfo.d = fVal;
+		} else if (identifier == "illum") {
+			if (!(ss >> iVal)) return false;
+			objInfo->marterialInfo.illum = iVal;
+		}
+	}
+	return true;
+}
+
+bool glload::FaceLine::parsingLine(ObjInfo* objInfo) {
+	std::vector<uint32_t> v;
+	uint32_t value;
+	
+	while (this->ss >> value) {
+		v.push_back(value);
+	}
+	
+	if (v.size() < 3) return false;
+
+	for (int i = 2; i < v.size(); i++) {
+		objInfo->indexInfo.faces.push_back(Face(v[0], v[i - 1], v[i]));
+	}
+	return true;
 }
