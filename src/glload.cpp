@@ -116,7 +116,6 @@ std::unique_ptr<glload::ObjInfo> glload::loadObjFile(const std::string& fileName
 	std::unique_ptr<ObjInfo> objInfo(new ObjInfo());
 	std::string line;
 	while (std::getline(fin, line)) {
-		std::cout << "line: " << line << "\n";
 		std::stringstream ss(line);
 		std::unique_ptr<IObjLine> objLine = generateLine(ss, fileName);
 		if (!objLine) { continue ;}
@@ -177,7 +176,6 @@ bool glload::MaterialLine::parsingLine(ObjInfo* objInfo) {
 
 	std::string mtlFilePath = getMtlFilePath(mtlFileName);
 
-	std::cout << "mtlFileName: " << mtlFileName << "\n";
 	std::ifstream fin(mtlFilePath);
 	
 	if (!fin.is_open()) {
@@ -189,7 +187,6 @@ bool glload::MaterialLine::parsingLine(ObjInfo* objInfo) {
 	uint32_t iVal;
 	while (std::getline(fin, line)) {
 		std::stringstream ss(line);
-		std::cout << "material line: " << line << "\n";
 		if (!(ss >> identifier)) {
 			continue ;
 		}
@@ -236,7 +233,7 @@ bool glload::FaceLine::parsingLine(ObjInfo* objInfo) {
 	if (v.size() < 3) return false;
 
 	for (int i = 2; i < v.size(); i++) {
-		objInfo->indexInfo.faces.push_back(Face(v[0], v[i - 1], v[i]));
+		objInfo->indexInfo.faces.push_back(Face(v[0] - 1, v[i - 1] - 1, v[i] - 1));
 	}
 	return true;
 }
