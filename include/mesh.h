@@ -14,7 +14,7 @@ struct Vertex {
 class Material {
 public:
 	Material() = default;
-	Material(const Material& copy) = default;
+	void set(glload::Material& materialInfo);
 
 private:
 	float m_Ka[3] { 0.2f, 0.2f, 0.2f };
@@ -36,11 +36,8 @@ public:
 
 private:
 	Mesh() = default;
-	Mesh(const Material& material);
-	
-	void init(std::vector<Vertex>& vertices,
-				std::vector<uint32_t>& indices, 
-				glload::ObjInfo* objInfo = nullptr);
+	void init(std::vector<Vertex>& vertices, std::vector<uint32_t>& indices);
+	void setMaterial(glload::Material& materialInfo);
 
 	std::unique_ptr<VertexArray> m_vertexArray;
 	std::shared_ptr<Buffer> m_vertexBuffer; 
