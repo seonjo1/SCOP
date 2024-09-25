@@ -13,46 +13,105 @@
 
 namespace glload {
 
-struct vPos {
+struct Pos {
 	float x;
 	float y;
 	float z;
+	
+	Pos(float x, float y, float z) : x(x), y(y), z(z) {};
 };
 
-struct vNormal {
+struct Normal {
 	float x;
 	float y;
 	float z;
+
+	Normal(float x, float y, float z) : x(x), y(y), z(z) {};
 };
 
-struct vTexCoord {
+struct TexCoord {
 	float x;
 	float y;
+
+	TexCoord(float x, float y) : x(x), y(y) {};
 };
 
 struct VertexInfo {
-	std::vector<vPos> vPosInfo; 
-	// std::vector<vNormal> vNormalInfo; 
-	// std::vector<vTexCoord> vTexInfo; 
+	std::vector<Pos> vPosInfo; 
+	// std::vector<Normal> vNormalInfo; 
+	// std::vector<TexCoord> vTexInfo; 
 };
 
-struct iFace {
-	std::vector<uint32_t> indexVec;
+struct Face {
+	uint32_t index[3];
+
+	Face(uint32_t i1, uint32_t i2, uint32_t i3) : index{i1, i2, i3} {};
 };
 
 struct IndexInfo {
-	std::vector<iFace> faces;
+	std::vector<Face> faces;
+};
+
+struct Material {
+	float Ka[3] { 0.2f, 0.2f, 0.2f };
+	float Kd[3] { 0.8f, 0.8f, 0.8f };
+	float Ks[3] { 0.5f, 0.5f, 0.5f };
+	float Ns { 50.0f };
+	float Ni { 1.0f };
+	float d { 1.0f };
+	uint32_t illum { 2 };
 };
 
 struct ObjInfo {
 	VertexInfo vertexInfo;
 	IndexInfo indexInfo;
+	Material marterialInfo;
+};
+
+class IObjLine {
+public:
+	virtual ~IObjLine() = default;
+	virtual bool parsingLine(ObjInfo* objInfo) = 0;
+};
+
+class VertexLine : public IObjLine {
+public:
+	VertexLine(std::stringstream& ss, const std::string& fileName);
+	virtual ~VertexLine() = default;
+	virtual bool parsingLine(ObjInfo* objInfo) override;
+
+private:
+	std::stringstream& ss;
+};
+
+class MaterialLine : public IObjLine {
+public:
+	MaterialLine(std::stringstream& ss, const std::string& fileName);
+	virtual ~MaterialLine() = default;
+	virtual bool parsingLine(ObjInfo* objInfo) override;
+
+private:
+	std::string getMtlFilePath(const std::string& mtlFileName);
+
+	std::stringstream& ss;
+	std::string fileName;
+};
+
+class FaceLine : public IObjLine {
+public:
+	FaceLine(std::stringstream& ss, const std::string& fileName);
+	virtual ~FaceLine() = default;
+	virtual bool parsingLine(ObjInfo* objInfo) override;
+
+private:
+	std::stringstream& ss;
 };
 
 bool isBmpFile(std::string fileName);
 std::unique_ptr<uint8_t[]> loadBmpImg(const char* fileName, int* width, int* height, int* channelCount);
 std::optional<std::string> loadShaderFile(const std::string& fileName);
-ObjInfo loadObjFile(const std::string& fileName);
+std::unique_ptr<ObjInfo> loadObjFile(const std::string& fileName);
+std::unique_ptr<IObjLine> generateLine(std::stringstream& ss, const std::string& fileName);
 
 }
 
