@@ -6,9 +6,9 @@
 
 class Model {
 public:
-	static std::unique_ptr<Model> create(std::string& fileName);
+	static std::unique_ptr<Model> create(std::string fileName);
 private:
-	bool createMeshes();
+	bool createMeshes(const std::string& fileName);
 
 	std::vector<Mesh> meshes;
 };
