@@ -8,8 +8,10 @@ void Context::Reshape(int width, int height) {
 	
 void Context::ProcessInput(GLFWwindow *window)
 {	
-	float objectSpeed = 0.025f;
-	float rotateSpeed = 0.5f;
+	const static float objectSpeed = 0.025f;
+	const static float rotateSpeed = 0.5f;
+	static float transSpeed = -0.01;
+	static bool keyTPressed = false;
 
 	float degree = 0.0f;
 	glmath::vec3 move(0.0f);
@@ -34,7 +36,15 @@ void Context::ProcessInput(GLFWwindow *window)
 	if (glfwGetKey(window, GLFW_KEY_R) == GLFW_PRESS)
 		degree = rotateSpeed;
 	
-	m_model->updateModel(move, degree);
+	if (glfwGetKey(window, GLFW_KEY_T) == GLFW_PRESS) {
+        if (!keyTPressed) {  // 이전에 눌리지 않았던 경우만 실행
+            transSpeed = -transSpeed;  // 값 변경
+            keyTPressed = true;  // 눌린 상태로 설정
+        }
+    } else {
+        keyTPressed = false;  // RELEASE 상태일 때 키 상태 초기화
+    }
+	m_model->updateModel(move, degree, transSpeed);
 }
 
 std::unique_ptr<Context> Context::create() {
@@ -52,7 +62,7 @@ bool Context::init() {
 		return false;
 	}
 
-	m_image = Image::create("./image/texture.bmp");
+	m_image = Image::create("./image/sample.bmp");
 	m_texture = Texture::create(m_image);
 
 	glEnable(GL_DEPTH_TEST);
