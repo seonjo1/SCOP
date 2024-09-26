@@ -29,7 +29,7 @@ int main(int argc, const char** argv) {
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
 	std::cout << "Create glfw window" << std::endl;
-	auto window = glfwCreateWindow(WINDOW_WIDTH, WINDOW_HEIGHT, WINDOW_NAME, nullptr, nullptr);
+	GLFWwindow* window = glfwCreateWindow(WINDOW_WIDTH, WINDOW_HEIGHT, WINDOW_NAME, nullptr, nullptr);
 	if (!window) {
 		std::cerr << "failed to create glfw window" << std::endl;
 		glfwTerminate();
@@ -59,6 +59,7 @@ int main(int argc, const char** argv) {
 	std::cout << "Start main loop" << std::endl;
 	while (!glfwWindowShouldClose(window)) {
 		glfwPollEvents();
+		context->ProcessInput(window);
 		context->Render();
 		glfwSwapBuffers(window);
 	}
