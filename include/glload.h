@@ -10,6 +10,7 @@
 # include <algorithm>
 # include <vector>
 # include <cmath>
+# include <random>
 
 namespace glload {
 
@@ -45,16 +46,27 @@ struct TexCoord {
 	TexCoord(float x, float y) : x(x), y(y) {};
 };
 
+struct Color {
+	float r;
+	float g;
+	float b;
+
+	Color(float r, float g, float b) : r(r), g(g), b(b) {};
+};
+
 struct VertexInfo {
 	std::vector<Pos> vPosInfo; 
+	std::vector<Color> vColorInfo;
+	std::vector<TexCoord> vTexInfo;
 	// std::vector<Normal> vNormalInfo; 
-	// std::vector<TexCoord> vTexInfo; 
 };
 
 struct Face {
-	uint32_t index[3];
+	uint32_t i1;
+	uint32_t i2;
+	uint32_t i3;
 
-	Face(uint32_t i1, uint32_t i2, uint32_t i3) : index{i1, i2, i3} {};
+	Face(uint32_t i1, uint32_t i2, uint32_t i3) : i1(i1), i2(i2), i3(i3) {};
 };
 
 struct IndexInfo {
