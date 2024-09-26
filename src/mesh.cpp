@@ -20,17 +20,14 @@ std::unique_ptr<Mesh> Mesh::createMesh(std::vector<Vertex>& vertices,
 	std::unique_ptr<Mesh> mesh(new Mesh());
 	mesh->init(vertices, indices);
 	mesh->setMaterial(objInfo->marterialInfo);
+	
 	return mesh;
 }
 
-void Mesh::setVertices(std::vector<Vertex>& vertices) {
-	static std::random_device rd;         
-	static std::mt19937 g(rd());
-	static std::uniform_real_distribution<float> dist(0.0f, 1.0f);
+void Mesh::setPosition(std::vector<Vertex>& vertices) {
 
 	glmath::vec3 maxV(0.0f);
 	glmath::vec3 minV(0.0f);
-
 
 	for (int i = 0; i < vertices.size(); i++) {
 		maxV.x = std::max(maxV.x, vertices[i].pos.x);
@@ -39,8 +36,6 @@ void Mesh::setVertices(std::vector<Vertex>& vertices) {
 		minV.x = std::min(minV.x, vertices[i].pos.x);
 		minV.y = std::min(minV.y, vertices[i].pos.y);
 		minV.z = std::min(minV.z, vertices[i].pos.z);
-
-		vertices[i].color = glmath::vec3(dist(g), dist(g), dist(g));
 	}
 
 	m_meshPos = (minV + maxV) * 0.5f;
@@ -49,7 +44,7 @@ void Mesh::setVertices(std::vector<Vertex>& vertices) {
 
 void Mesh::init(std::vector<Vertex>& vertices, std::vector<uint32_t>& indices) {
 
-	setVertices(vertices);
+	setPosition(vertices);
 
 	GLsizei vertexSize = vertices.size();
 	m_elementSize = indices.size();
