@@ -170,16 +170,17 @@ bool glload::VertexLine::parsingLine(ObjInfo* objInfo) {
 	
 	if (v.size() != 3) return false;
 
- 
-	float r = std::sqrt(v[0] * v[0] + v[1] * v[1] + v[2] * v[2]);
-	float theta = std::atan2(v[2], v[0]);
-	float phi = std::acos(v[1] / r);
-
-	float U = theta / (2.0f * 3.141592f);
-	float V = phi / 3.141592f;
-	
+	// UV 텍스처 코드
+	// float pi = 3.141592f;
+	// float r = std::sqrt(v[0] * v[0] + v[1] * v[1] + v[2] * v[2]);
+	// if (r == 0) r = 1.0f;
+	// float theta = std::atan2(v[2], v[0]);
+	// float phi = std::asin(v[1] / r);
+	// float U = (phi + pi / 2) / pi;
+	// float V = (theta + pi) / (2.0f * pi);
+	// objInfo->vertexInfo.vTexInfo.push_back(TexCoord(V, U));
 	objInfo->vertexInfo.vPosInfo.push_back(Pos(v[0], v[1], v[2]));
-	objInfo->vertexInfo.vTexInfo.push_back(TexCoord(U, V));
+	objInfo->vertexInfo.vTexInfo.push_back(TexCoord(v[0], v[1]));
 
 	return true;
 }
