@@ -9,7 +9,7 @@ std::shared_ptr<Image> Image::create(const char* fileName) {
 }
 
 bool Image::load(const char* fileName) {
-	m_image = glload::loadBmpImg("./image/sample.bmp", &m_width, &m_height, &m_channelCount);
+	m_image = glload::loadBmpImg(fileName, &m_width, &m_height, &m_channelCount);
 	if (!m_image) {
 		return false;
 	}
