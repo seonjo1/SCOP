@@ -5,6 +5,37 @@ void Context::Reshape(int width, int height) {
 	m_height = height;
 	glViewport(0, 0, m_width, m_height);
 }
+	
+void Context::ProcessInput(GLFWwindow *window)
+{	
+	float objectSpeed = 0.025f;
+	float rotateSpeed = 0.5f;
+
+	float degree = 0.0f;
+	glmath::vec3 move(0.0f);
+	
+	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+		move = move + objectSpeed * m_cameraFront;
+	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+		move = move - objectSpeed * m_cameraFront;
+
+	glmath::vec3 cameraRight = glmath::normalize(glmath::cross(m_cameraFront, m_cameraUp));
+	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+		move = move + objectSpeed * cameraRight;
+	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+		move = move - objectSpeed * cameraRight;
+	
+	glmath::vec3 cameraUp = glmath::normalize(glmath::cross(cameraRight, m_cameraFront));
+	if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS)
+		move = move + objectSpeed * cameraUp;
+	if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS)
+		move = move - objectSpeed * cameraUp;
+
+	if (glfwGetKey(window, GLFW_KEY_R) == GLFW_PRESS)
+		degree = rotateSpeed;
+	
+	m_model->updateModel(move, degree);
+}
 
 std::unique_ptr<Context> Context::create() {
 	std::unique_ptr<Context> context(new Context());
@@ -41,5 +72,5 @@ void Context::Render() {
 	m_program->setUniform("projection", projection);
 	m_texture->activeTexture(GL_TEXTURE0);
 	
-	m_model->draw(m_program.get(), m_cameraPos, m_cameraUp);
+	m_model->draw(m_program.get(), m_cameraPos, m_cameraUp, m_cameraFront);
 }
