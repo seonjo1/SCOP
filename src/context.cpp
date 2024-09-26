@@ -34,16 +34,12 @@ void Context::Render() {
 	glClearColor(0.1f, 0.2f, 0.3f, 0.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-
-	glmath::mat4 model = glmath::scale(glmath::mat4(1.0f), glmath::vec3(2.0f));
-	glmath::mat4 view = glmath::lookAt(glmath::vec3(-10.0f, 0.0f, 0.0f), glmath::vec3(0.0f, 0.0f, 0.0f), glmath::vec3(0.0f, 1.0f, 0.0f));
-	glmath::mat4 projection = glmath::perspective(glmath::radians(45.0f), (float)m_width / (float)m_height , 0.01f, 10.0f);
-	glmath::mat4 transform = projection * view * model;
+	glmath::mat4 projection = glmath::perspective(glmath::radians(45.0f), (float)m_width / (float)m_height , 0.01f, 30.0f);
 
 	m_program->useProgram();
 	m_program->setUniform("tex", 0);
-	m_program->setUniform("transform", transform);
+	m_program->setUniform("projection", projection);
 	m_texture->activeTexture(GL_TEXTURE0);
 	
-	m_model->draw();
+	m_model->draw(m_program.get(), m_cameraPos, m_cameraUp);
 }
