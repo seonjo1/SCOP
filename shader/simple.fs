@@ -4,8 +4,8 @@ in vec3 color;
 out vec4 fragColor;
 
 uniform sampler2D tex;
+uniform float texRatio;
 
 void main() {
-	fragColor = vec4(color, 1.0f);
-	// fragColor = texture(tex, texCoord);
+	fragColor = texture(tex, texCoord) * texRatio + vec4(color, 1.0f) * (1 - texRatio);
 }
