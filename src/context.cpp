@@ -14,15 +14,15 @@ void Context::ProcessInput(GLFWwindow *window)
 	float degree = 0.0f;
 	glmath::vec3 move(0.0f);
 	
-	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-		move = move + objectSpeed * m_cameraFront;
 	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+		move = move + objectSpeed * m_cameraFront;
+	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
 		move = move - objectSpeed * m_cameraFront;
 
 	glmath::vec3 cameraRight = glmath::normalize(glmath::cross(m_cameraFront, m_cameraUp));
-	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-		move = move + objectSpeed * cameraRight;
 	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+		move = move + objectSpeed * cameraRight;
+	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
 		move = move - objectSpeed * cameraRight;
 	
 	glmath::vec3 cameraUp = glmath::normalize(glmath::cross(cameraRight, m_cameraFront));
@@ -45,7 +45,7 @@ std::unique_ptr<Context> Context::create() {
 
 bool Context::init() {
 	
-	m_model = Model::create("./object/42.obj");
+	m_model = Model::create("./object/teapot2.obj");
 	m_program = Program::create("./shader/simple.vs", "./shader/simple.fs");
 
 	if (!m_program) {
