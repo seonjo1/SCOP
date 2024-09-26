@@ -4,6 +4,7 @@
 # include "scop.h"
 # include "vertexArray.h"
 # include "buffer.h"
+# include <random>
 
 struct Vertex {
 	glmath::vec3 pos;
@@ -40,7 +41,8 @@ private:
 	Mesh() = default;
 	void init(std::vector<Vertex>& vertices, std::vector<uint32_t>& indices);
 	void setMaterial(glload::Material& materialInfo);
-	void setPosition(std::vector<Vertex>& verticies);
+	void setPosition(std::vector<Vertex>& vertices);
+	void setColor(std::vector<Vertex>& vertices);
 
 	std::unique_ptr<VertexArray> m_vertexArray;
 	std::shared_ptr<Buffer> m_vertexBuffer; 

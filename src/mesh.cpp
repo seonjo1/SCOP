@@ -42,9 +42,24 @@ void Mesh::setPosition(std::vector<Vertex>& vertices) {
 	m_move = glmath::vec3(0.0f);
 }
 
+void Mesh::setColor(std::vector<Vertex>& vertices) {
+	static std::random_device rd;
+	static std::mt19937 gen(rd());
+	static std::uniform_real_distribution<float> dis(0.0f, 1.0f);
+	
+	for (int i = 0; i < vertices.size() / 3; i++) {
+		glmath::vec3 color(dis(gen), dis(gen), dis(gen));
+		vertices[3 * i].color = color;
+		vertices[3 * i + 1].color = color;
+		vertices[3 * i + 2].color = color;
+	}
+}
+
+
 void Mesh::init(std::vector<Vertex>& vertices, std::vector<uint32_t>& indices) {
 
 	setPosition(vertices);
+	setColor(vertices);
 
 	GLsizei vertexSize = vertices.size();
 	m_elementSize = indices.size();
