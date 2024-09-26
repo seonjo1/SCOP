@@ -22,17 +22,21 @@ bool Model::createMeshes(const std::string& fileName) {
 		vertices.push_back(Vertex{glmath::vec3(objInfo->vertexInfo.vPosInfo[i].x,
 						   					   objInfo->vertexInfo.vPosInfo[i].y,
 						   					   objInfo->vertexInfo.vPosInfo[i].z),
-								  glmath::vec2(0.0f, 0.0f)});
+								  glmath::vec2(objInfo->vertexInfo.vTexInfo[i].x,
+								  			   objInfo->vertexInfo.vTexInfo[i].y),
+								  glmath::vec3(objInfo->vertexInfo.vColorInfo[i].r,
+						   					   objInfo->vertexInfo.vColorInfo[i].g,
+						   					   objInfo->vertexInfo.vColorInfo[i].b)});
 	}
 
 	for (int j = 0; j < objInfo->indexInfo.faces.size(); j++) {
-		indices.push_back(objInfo->indexInfo.faces[j].index[0]);
-		indices.push_back(objInfo->indexInfo.faces[j].index[1]);
-		indices.push_back(objInfo->indexInfo.faces[j].index[2]);
+		indices.push_back(objInfo->indexInfo.faces[j].i1);
+		indices.push_back(objInfo->indexInfo.faces[j].i2);
+		indices.push_back(objInfo->indexInfo.faces[j].i3);
 	}
-
-	m_meshes.push_back(Mesh::createMesh(vertices, indices, objInfo.get()));
 	
+	m_meshes.push_back(Mesh::createMesh(vertices, indices, objInfo.get()));
+
 	return true;
 }
 
