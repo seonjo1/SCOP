@@ -36,10 +36,16 @@ bool Model::createMeshes(const std::string& fileName) {
 	return true;
 }
 
-void Model::draw(Program* program, glmath::vec3& cameraPos, glmath::vec3& cameraUp) {
+void Model::draw(Program* program, glmath::vec3& cameraPos, glmath::vec3& cameraUp, glmath::vec3& cameraFront) {
 	for (std::unique_ptr<Mesh>& mesh : m_meshes) {		
-		glmath::mat4 viewModelMatrix = mesh->getViewModelMatrix(cameraPos, cameraUp);
+		glmath::mat4 viewModelMatrix = mesh->getViewModelMatrix(cameraPos, cameraUp, cameraFront);
 		program->setUniform("viewModel", viewModelMatrix);
 		mesh->draw();
+	}
+}
+
+void Model::updateModel(glmath::vec3& move, float degree) {
+	for (std::unique_ptr<Mesh>& mesh : m_meshes) {
+		mesh->updateMesh(move, degree);
 	}
 }

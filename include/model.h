@@ -8,7 +8,8 @@
 class Model {
 public:
 	static std::unique_ptr<Model> create(std::string fileName);
-	void draw(Program* program, glmath::vec3& cameraPos, glmath::vec3& cameraUp);
+	void draw(Program* program, glmath::vec3& cameraPos, glmath::vec3& cameraUp, glmath::vec3& cameraFront);
+	void updateModel(glmath::vec3& move, float degree);
 
 private:
 	bool createMeshes(const std::string& fileName);
