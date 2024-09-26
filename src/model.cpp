@@ -8,6 +8,16 @@ std::unique_ptr<Model> Model::create(std::string fileName) {
 	return model;
 }
 
+void Model::addVertex(glload::ObjInfo* objInfo, std::vector<Vertex>& vertices, std::vector<uint32_t>& indices, uint32_t idx) {
+	vertices.push_back(Vertex{glmath::vec3(objInfo->vertexInfo.vPosInfo[idx].x,
+										objInfo->vertexInfo.vPosInfo[idx].y,
+										objInfo->vertexInfo.vPosInfo[idx].z),
+							glmath::vec2(objInfo->vertexInfo.vTexInfo[idx].x,
+										objInfo->vertexInfo.vTexInfo[idx].y),
+							glmath::vec3(0.0f)});
+	indices.push_back(vertices.size() - 1);
+}
+
 bool Model::createMeshes(const std::string& fileName) {
 	std::unique_ptr<glload::ObjInfo> objInfo = glload::loadObjFile(fileName);
 	if (!objInfo) {
@@ -18,21 +28,10 @@ bool Model::createMeshes(const std::string& fileName) {
 	std::vector<Vertex> vertices;
 	std::vector<uint32_t> indices;
 
-	for (int i = 0; i < objInfo->vertexInfo.vPosInfo.size(); i++) {
-		vertices.push_back(Vertex{glmath::vec3(objInfo->vertexInfo.vPosInfo[i].x,
-						   					   objInfo->vertexInfo.vPosInfo[i].y,
-						   					   objInfo->vertexInfo.vPosInfo[i].z),
-								  glmath::vec2(objInfo->vertexInfo.vTexInfo[i].x,
-								  			   objInfo->vertexInfo.vTexInfo[i].y),
-								  glmath::vec3(objInfo->vertexInfo.vColorInfo[i].r,
-						   					   objInfo->vertexInfo.vColorInfo[i].g,
-						   					   objInfo->vertexInfo.vColorInfo[i].b)});
-	}
-
-	for (int j = 0; j < objInfo->indexInfo.faces.size(); j++) {
-		indices.push_back(objInfo->indexInfo.faces[j].i1);
-		indices.push_back(objInfo->indexInfo.faces[j].i2);
-		indices.push_back(objInfo->indexInfo.faces[j].i3);
+	for (int i = 0; i < objInfo->indexInfo.faces.size(); i++) {
+		addVertex(objInfo.get(), vertices, indices, objInfo->indexInfo.faces[i].i1);
+		addVertex(objInfo.get(), vertices, indices, objInfo->indexInfo.faces[i].i2);
+		addVertex(objInfo.get(), vertices, indices, objInfo->indexInfo.faces[i].i3);
 	}
 	
 	m_meshes.push_back(Mesh::createMesh(vertices, indices, objInfo.get()));

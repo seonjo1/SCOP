@@ -13,6 +13,8 @@ public:
 
 private:
 	bool createMeshes(const std::string& fileName);
+	void addVertex(glload::ObjInfo* objInfo, std::vector<Vertex>& vertices, std::vector<uint32_t>& indices, uint32_t idx);
+
 	std::vector<std::unique_ptr<Mesh>> m_meshes;
 };
 
