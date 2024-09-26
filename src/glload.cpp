@@ -160,9 +160,6 @@ glload::FaceLine::FaceLine(std::stringstream& ss,  const std::string& fileName)
 	: ss(ss) {};
 
 bool glload::VertexLine::parsingLine(ObjInfo* objInfo) {
-	static std::random_device rd;         
-	static std::mt19937 g(rd());
-	static std::uniform_real_distribution<float> dist(0.0f, 1.0f);
 
 	std::vector<float> v;
 	float value;
@@ -182,7 +179,6 @@ bool glload::VertexLine::parsingLine(ObjInfo* objInfo) {
 	float V = phi / 3.141592f;
 	
 	objInfo->vertexInfo.vPosInfo.push_back(Pos(v[0], v[1], v[2]));
-	objInfo->vertexInfo.vColorInfo.push_back(Color(dist(g), dist(g), dist(g)));
 	objInfo->vertexInfo.vTexInfo.push_back(TexCoord(U, V));
 
 	return true;

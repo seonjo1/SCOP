@@ -10,7 +10,6 @@
 # include <algorithm>
 # include <vector>
 # include <cmath>
-# include <random>
 
 namespace glload {
 
@@ -46,17 +45,8 @@ struct TexCoord {
 	TexCoord(float x, float y) : x(x), y(y) {};
 };
 
-struct Color {
-	float r;
-	float g;
-	float b;
-
-	Color(float r, float g, float b) : r(r), g(g), b(b) {};
-};
-
 struct VertexInfo {
 	std::vector<Pos> vPosInfo; 
-	std::vector<Color> vColorInfo;
 	std::vector<TexCoord> vTexInfo;
 	// std::vector<Normal> vNormalInfo; 
 };
