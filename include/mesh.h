@@ -4,10 +4,12 @@
 # include "scop.h"
 # include "vertexArray.h"
 # include "buffer.h"
+# include <random>    
 
 struct Vertex {
 	glmath::vec3 pos;
 	glmath::vec2 texCoord;
+	glmath::vec3 color;
 };
 
 
@@ -32,18 +34,23 @@ public:
 	static std::unique_ptr<Mesh> createMesh(std::vector<Vertex>& vertices,
 											std::vector<uint32_t>& indices, 
 											glload::ObjInfo* objInfo);
+	glmath::mat4 getViewModelMatrix(glmath::vec3& cameraPos, glmath::vec3& cameraUp);
 	void draw();
 
 private:
 	Mesh() = default;
 	void init(std::vector<Vertex>& vertices, std::vector<uint32_t>& indices);
 	void setMaterial(glload::Material& materialInfo);
+	void setVertices(std::vector<Vertex>& verticies);
 
 	std::unique_ptr<VertexArray> m_vertexArray;
 	std::shared_ptr<Buffer> m_vertexBuffer; 
 	std::shared_ptr<Buffer> m_elementBuffer;
 	GLsizei m_elementSize;
 	Material m_material;
+	glmath::vec3 m_meshPos;
+	glmath::vec3 m_move;
+	float m_degree{0.0f};
 };
 
 #endif
