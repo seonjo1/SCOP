@@ -88,13 +88,13 @@ void Mesh::setMaterial(glload::Material& materialInfo) {
 	this->m_material.set(materialInfo);
 }
 
-glmath::mat4 Mesh::getViewModelMatrix(glmath::vec3& cameraPos, glmath::vec3& cameraUp) {
+glmath::mat4 Mesh::getViewModelMatrix(glmath::vec3& cameraPos, glmath::vec3& cameraUp, glmath::vec3& cameraFront) {
 	glmath::mat4 model = glmath::translate(glmath::mat4(1.0f), m_meshPos + m_move) *
 						 glmath::rotate(glmath::mat4(1.0f), glmath::radians(m_degree), glmath::vec3(0.0f, 1.0f, 0.0f)) *
 						 glmath::scale(glmath::mat4(1.0f), glmath::vec3(1.0f)) *
 						 glmath::translate(glmath::mat4(1.0f), -1 * m_meshPos);
 						 
-	glmath::mat4 view = glmath::lookAt(cameraPos, glmath::vec3(0.0f), cameraUp);
+	glmath::mat4 view = glmath::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
 	return view * model;
 }
 

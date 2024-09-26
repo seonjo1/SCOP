@@ -36,7 +36,7 @@ public:
 											glload::ObjInfo* objInfo);
 	void draw();
 	void updateMesh(glmath::vec3& move, float degree);
-	glmath::mat4 getViewModelMatrix(glmath::vec3& cameraPos, glmath::vec3& cameraUp);
+	glmath::mat4 getViewModelMatrix(glmath::vec3& cameraPos, glmath::vec3& cameraUp, glmath::vec3& cameraFront);
 
 private:
 	Mesh() = default;
