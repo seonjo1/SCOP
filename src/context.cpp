@@ -26,9 +26,9 @@ void Context::ProcessInput(GLFWwindow *window)
 		move = move - objectSpeed * cameraRight;
 	
 	glmath::vec3 cameraUp = glmath::normalize(glmath::cross(cameraRight, m_cameraFront));
-	if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS)
-		move = move + objectSpeed * cameraUp;
 	if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS)
+		move = move + objectSpeed * cameraUp;
+	if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS)
 		move = move - objectSpeed * cameraUp;
 
 	if (glfwGetKey(window, GLFW_KEY_R) == GLFW_PRESS)
@@ -52,7 +52,7 @@ bool Context::init() {
 		return false;
 	}
 
-	m_image = Image::create("./image/sample.bmp");
+	m_image = Image::create("./image/texture.bmp");
 	m_texture = Texture::create(m_image);
 
 	glEnable(GL_DEPTH_TEST);
