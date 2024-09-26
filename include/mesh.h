@@ -15,7 +15,7 @@ struct Vertex {
 class Material {
 public:
 	Material() = default;
-	void set(glload::Material& materialInfo);
+	void setMaterial(glload::Material& materialInfo);
 
 private:
 	float m_Ka[3] { 0.2f, 0.2f, 0.2f };
@@ -34,24 +34,17 @@ public:
 											std::vector<uint32_t>& indices, 
 											glload::ObjInfo* objInfo);
 	void draw();
-	void updateMesh(glmath::vec3& move, float degree);
-	glmath::mat4 getViewModelMatrix(glmath::vec3& cameraPos, glmath::vec3& cameraUp, glmath::vec3& cameraFront);
 
 private:
 	Mesh() = default;
 	void init(std::vector<Vertex>& vertices, std::vector<uint32_t>& indices);
-	void setMaterial(glload::Material& materialInfo);
-	void setPosition(std::vector<Vertex>& vertices);
-	void setColor(std::vector<Vertex>& vertices);
+	void initMaterial(glload::Material& materialInfo);
 
 	std::unique_ptr<VertexArray> m_vertexArray;
 	std::shared_ptr<Buffer> m_vertexBuffer; 
 	std::shared_ptr<Buffer> m_elementBuffer;
 	GLsizei m_elementSize;
 	Material m_material;
-	glmath::vec3 m_meshPos;
-	glmath::vec3 m_move;
-	float m_degree{0.0f};
 };
 
 #endif

@@ -19,47 +19,13 @@ std::unique_ptr<Mesh> Mesh::createMesh(std::vector<Vertex>& vertices,
 										glload::ObjInfo* objInfo) {
 	std::unique_ptr<Mesh> mesh(new Mesh());
 	mesh->init(vertices, indices);
-	mesh->setMaterial(objInfo->marterialInfo);
+	mesh->initMaterial(objInfo->marterialInfo);
 	
 	return mesh;
 }
 
-void Mesh::setPosition(std::vector<Vertex>& vertices) {
-
-	glmath::vec3 maxV(0.0f);
-	glmath::vec3 minV(0.0f);
-
-	for (int i = 0; i < vertices.size(); i++) {
-		maxV.x = std::max(maxV.x, vertices[i].pos.x);
-		maxV.y = std::max(maxV.y, vertices[i].pos.y);
-		maxV.z = std::max(maxV.z, vertices[i].pos.z);
-		minV.x = std::min(minV.x, vertices[i].pos.x);
-		minV.y = std::min(minV.y, vertices[i].pos.y);
-		minV.z = std::min(minV.z, vertices[i].pos.z);
-	}
-
-	m_meshPos = (minV + maxV) * 0.5f;
-	m_move = glmath::vec3(0.0f);
-}
-
-void Mesh::setColor(std::vector<Vertex>& vertices) {
-	static std::random_device rd;
-	static std::mt19937 gen(rd());
-	static std::uniform_real_distribution<float> dis(0.0f, 1.0f);
-	
-	for (int i = 0; i < vertices.size() / 3; i++) {
-		glmath::vec3 color(dis(gen), dis(gen), dis(gen));
-		vertices[3 * i].color = color;
-		vertices[3 * i + 1].color = color;
-		vertices[3 * i + 2].color = color;
-	}
-}
-
 
 void Mesh::init(std::vector<Vertex>& vertices, std::vector<uint32_t>& indices) {
-
-	setPosition(vertices);
-	setColor(vertices);
 
 	GLsizei vertexSize = vertices.size();
 	m_elementSize = indices.size();
@@ -81,7 +47,7 @@ void Mesh::draw() {
 	glDrawElements(GL_TRIANGLES, m_elementSize, GL_UNSIGNED_INT, 0);
 }
 
-void Material::set(glload::Material& materialInfo) {
+void Material::setMaterial(glload::Material& materialInfo) {
 	for (int i = 0; i < 3; ++i) {
 		this->m_Ka[i] = materialInfo.Ka[i];
 		this->m_Kd[i] = materialInfo.Kd[i];
@@ -94,22 +60,6 @@ void Material::set(glload::Material& materialInfo) {
 	this->m_illum = materialInfo.illum;
 }
 
-void Mesh::setMaterial(glload::Material& materialInfo) {
-	this->m_material.set(materialInfo);
-}
-
-glmath::mat4 Mesh::getViewModelMatrix(glmath::vec3& cameraPos, glmath::vec3& cameraUp, glmath::vec3& cameraFront) {
-	glmath::mat4 model = glmath::translate(glmath::mat4(1.0f), m_meshPos + m_move) *
-						 glmath::rotate(glmath::mat4(1.0f), glmath::radians(m_degree), glmath::vec3(0.0f, 1.0f, 0.0f)) *
-						 glmath::scale(glmath::mat4(1.0f), glmath::vec3(1.0f)) *
-						 glmath::translate(glmath::mat4(1.0f), -1 * m_meshPos);
-						 
-	glmath::mat4 view = glmath::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
-	return view * model;
-}
-
-void Mesh::updateMesh(glmath::vec3& move, float degree) {
-	m_move = m_move + move;
-	m_degree = m_degree + degree;
-	if (m_degree > 360.0f) m_degree -= 360.0f;
+void Mesh::initMaterial(glload::Material& materialInfo) {
+	this->m_material.setMaterial(materialInfo);
 }
