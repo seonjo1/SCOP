@@ -34,8 +34,9 @@ public:
 	static std::unique_ptr<Mesh> createMesh(std::vector<Vertex>& vertices,
 											std::vector<uint32_t>& indices, 
 											glload::ObjInfo* objInfo);
-	glmath::mat4 getViewModelMatrix(glmath::vec3& cameraPos, glmath::vec3& cameraUp);
 	void draw();
+	void updateMesh(glmath::vec3& move, float degree);
+	glmath::mat4 getViewModelMatrix(glmath::vec3& cameraPos, glmath::vec3& cameraUp);
 
 private:
 	Mesh() = default;

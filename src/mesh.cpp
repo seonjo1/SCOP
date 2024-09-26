@@ -94,6 +94,12 @@ glmath::mat4 Mesh::getViewModelMatrix(glmath::vec3& cameraPos, glmath::vec3& cam
 						 glmath::scale(glmath::mat4(1.0f), glmath::vec3(1.0f)) *
 						 glmath::translate(glmath::mat4(1.0f), -1 * m_meshPos);
 						 
-	glmath::mat4 view = glmath::lookAt(cameraPos, m_meshPos, cameraUp);
+	glmath::mat4 view = glmath::lookAt(cameraPos, glmath::vec3(0.0f), cameraUp);
 	return view * model;
+}
+
+void Mesh::updateMesh(glmath::vec3& move, float degree) {
+	m_move = m_move + move;
+	m_degree = m_degree + degree;
+	if (m_degree > 360.0f) m_degree -= 360.0f;
 }
