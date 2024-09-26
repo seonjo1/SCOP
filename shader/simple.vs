@@ -10,8 +10,14 @@ uniform mat4 projection;
 out vec2 texCoord;
 out vec3 color;
 
+float rand(vec3 seed) {
+    return fract(sin(dot(seed.xyz, vec3(12.9898, 78.233, 45.164))) * 43758.5453);
+}
+
 void main() {
-	gl_Position = projection * viewModel * vec4(aPos, 1.0f);
-	texCoord = aTexCoord;
-	color = aColor;
+    gl_Position = projection * viewModel * vec4(aPos, 1.0f);
+    texCoord = aTexCoord;
+
+    // 각 정점의 위치를 기반으로 의사난수 생성
+    color = vec3(rand(aPos), rand(aPos * 2.0), rand(aPos * 3.0));
 }
