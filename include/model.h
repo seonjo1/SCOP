@@ -20,8 +20,8 @@ private:
 	void setModelPos(std::vector<Vertex>& vertices);
 
 	std::vector<std::unique_ptr<Mesh>> m_meshes;
-	glmath::vec3 m_modelPos;
-	glmath::vec3 m_move;
+	glmath::vec3 m_modelPos{0.0f, 0.0f, 0.0f};
+	glmath::vec3 m_move{0.0f, 0.0f, 0.0f};
 	float m_degree{0.0f};
 	float m_texRatio{0.0f};
 };
