@@ -257,11 +257,22 @@ bool glload::MaterialLine::parsingLine(ObjInfo* objInfo) {
 }
 
 bool glload::FaceLine::parsingLine(ObjInfo* objInfo) {
+
 	std::vector<uint32_t> v;
+	std::stringstream toUint32;
+	std::string line;
 	uint32_t value;
-	
-	while (this->ss >> value) {
-		v.push_back(value);
+
+	while (this->ss >> line) {
+		std::size_t pos = line.find('/');
+		if (pos != std::string::npos) {
+			line = line.substr(0, pos);
+		}
+		toUint32 << line << " ";
+	}
+
+	while (toUint32 >> value) {
+			v.push_back(value);		
 	}
 	
 	if (v.size() < 3) return false;
