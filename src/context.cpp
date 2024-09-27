@@ -55,15 +55,14 @@ std::unique_ptr<Context> Context::create() {
 }
 
 bool Context::init() {
-	
-	m_model = Model::create("./object/42.obj");
+	m_model = Model::create("./object/skull.obj");
 	m_program = Program::create("./shader/simple.vs", "./shader/simple.fs");
 
-	if (!m_program) {
+	if (!m_program || !m_model) {
 		return false;
 	}
 
-	m_image = Image::create("./image/sample.bmp");
+	m_image = Image::create("./image/texture.bmp");
 	m_texture = Texture::create(m_image);
 
 	glEnable(GL_DEPTH_TEST);
