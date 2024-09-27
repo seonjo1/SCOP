@@ -90,6 +90,6 @@ void Model::draw(Program* program, glmath::vec3& cameraPos, glmath::vec3& camera
 void Model::updateModel(glmath::vec3& move, float degree, float transSpeed) {
 	m_move = m_move + move;
 	m_degree = m_degree + degree;
-	if (m_degree > 360.0f) m_degree -= 360.0f;
+	if (m_degree > 360.0f) { m_degree -= 360.0f; }
 	m_texRatio = std::clamp(m_texRatio + transSpeed, 0.0f, 1.0f);
 }
