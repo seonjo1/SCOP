@@ -37,13 +37,14 @@ void Context::ProcessInput(GLFWwindow *window)
 		degree = rotateSpeed;
 	
 	if (glfwGetKey(window, GLFW_KEY_T) == GLFW_PRESS) {
-        if (!keyTPressed) {  // 이전에 눌리지 않았던 경우만 실행
-            transSpeed = -transSpeed;  // 값 변경
-            keyTPressed = true;  // 눌린 상태로 설정
+        if (!keyTPressed) {
+            transSpeed = -transSpeed;
+            keyTPressed = true;
         }
     } else {
-        keyTPressed = false;  // RELEASE 상태일 때 키 상태 초기화
+        keyTPressed = false;
     }
+	
 	m_model->updateModel(move, degree, transSpeed);
 }
 
@@ -55,7 +56,7 @@ std::unique_ptr<Context> Context::create() {
 
 bool Context::init() {
 	
-	m_model = Model::create("./object/teapot2.obj");
+	m_model = Model::create("./object/42.obj");
 	m_program = Program::create("./shader/simple.vs", "./shader/simple.fs");
 
 	if (!m_program) {
