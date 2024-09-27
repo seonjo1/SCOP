@@ -19,8 +19,8 @@ void Model::addVertex(glload::ObjInfo* objInfo, std::vector<Vertex>& vertices, s
 }
 
 void Model::setModelPos(std::vector<Vertex>& vertices) {
-	glmath::vec3 maxV(0.0f);
-	glmath::vec3 minV(0.0f);
+    glmath::vec3 maxV(-std::numeric_limits<float>::infinity());
+    glmath::vec3 minV(std::numeric_limits<float>::infinity());
 
 	for (int i = 0; i < vertices.size(); i++) {
 		maxV.x = std::max(maxV.x, vertices[i].pos.x);
@@ -73,7 +73,7 @@ bool Model::createMeshes(const std::string& fileName) {
 }
 
 void Model::draw(Program* program, glmath::vec3& cameraPos, glmath::vec3& cameraUp, glmath::vec3& cameraFront) {
-	glmath::mat4 model = glmath::translate(glmath::mat4(1.0f), m_modelPos + m_move) *
+	glmath::mat4 model = glmath::translate(glmath::mat4(1.0f), m_move) *
 						 glmath::rotate(glmath::mat4(1.0f), glmath::radians(m_degree), glmath::vec3(0.0f, 1.0f, 0.0f)) *
 						 glmath::scale(glmath::mat4(1.0f), glmath::vec3(1.0f)) *
 						 glmath::translate(glmath::mat4(1.0f), -1 * m_modelPos);
