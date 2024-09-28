@@ -15,9 +15,11 @@ public:
 
 private:
 	bool createMeshes(const std::string& fileName);
-	void addVertex(glload::ObjInfo* objInfo, std::vector<Vertex>& vertices, std::vector<uint32_t>& indices, uint32_t idx);
-	void setColor(std::vector<Vertex>& vertices);
+	void addVertex(glload::ObjInfo* objInfo, std::vector<Vertex>& vertices, std::vector<uint32_t>& indices, glload::Face& face);
+	void setColor(std::vector<Vertex>& vertices, std::vector<glmath::vec3>& colors);
 	void setModelPos(std::vector<Vertex>& vertices);
+	void makeTextureCoord(Vertex& vertex);
+
 
 	std::vector<std::unique_ptr<Mesh>> m_meshes;
 	glmath::vec3 m_modelPos{0.0f, 0.0f, 0.0f};

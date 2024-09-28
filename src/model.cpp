@@ -8,14 +8,44 @@ std::unique_ptr<Model> Model::create(std::string fileName) {
 	return model;
 }
 
-void Model::addVertex(glload::ObjInfo* objInfo, std::vector<Vertex>& vertices, std::vector<uint32_t>& indices, uint32_t idx) {
-	vertices.push_back(Vertex{glmath::vec3(objInfo->vertexInfo.vPosInfo[idx].x,
-										objInfo->vertexInfo.vPosInfo[idx].y,
-										objInfo->vertexInfo.vPosInfo[idx].z),
-							glmath::vec2(objInfo->vertexInfo.vTexInfo[idx].x,
-										objInfo->vertexInfo.vTexInfo[idx].y),
-							glmath::vec3(0.0f)});
-	indices.push_back(vertices.size() - 1);
+void Model::makeTextureCoord(Vertex& vertex) {
+	
+	// UV 텍스처 코드
+	// float pi = 3.141592f;
+	// float r = std::sqrt(vertex.pos.x * vertex.pos.x + vertex.pos.y * vertex.pos.y + vertex.pos.z * vertex.pos.z);
+	// if (r == 0) r = 1.0f;
+	// float theta = std::atan2(vertex.pos.y, vertex.pos.x);
+	// float phi = std::asin(vertex.pos.y / r);
+	// float U = (phi + pi / 2) / pi;
+	// float V = (theta + pi) / (2.0f * pi);
+	// vertex.texCoord.x = V;
+	// vertex.texCoord.y = U;
+
+	// x, y 텍스처 코드
+	vertex.texCoord.x = vertex.pos.x;
+	vertex.texCoord.y = vertex.pos.y;
+}
+
+void Model::addVertex(glload::ObjInfo* objInfo, std::vector<Vertex>& vertices, std::vector<uint32_t>& indices, glload::Face& face) {
+	for (int i = 0; i < 3; i++) {
+		int32_t posIdx = face.posIdx[i]; 
+		int32_t texIdx = face.texIdx[i]; 
+		int32_t normalIdx = face.normalIdx[i];
+		 
+		vertices.push_back(Vertex{glmath::vec3(objInfo->vertexInfo.vPosInfo[posIdx].x,
+											objInfo->vertexInfo.vPosInfo[posIdx].y,
+											objInfo->vertexInfo.vPosInfo[posIdx].z),
+								glmath::vec2(objInfo->vertexInfo.vTexInfo[texIdx].x,
+											objInfo->vertexInfo.vTexInfo[texIdx].y),
+								glmath::vec3(objInfo->vertexInfo.vNormalInfo[normalIdx].x,
+											objInfo->vertexInfo.vNormalInfo[normalIdx].y,
+											objInfo->vertexInfo.vNormalInfo[normalIdx].z)});
+		indices.push_back(vertices.size() - 1);
+
+		if (!face.hasTexture) {
+			makeTextureCoord(vertices[vertices.size() - 1]);
+		}
+	}
 }
 
 void Model::setModelPos(std::vector<Vertex>& vertices) {
@@ -35,16 +65,16 @@ void Model::setModelPos(std::vector<Vertex>& vertices) {
 	m_move = glmath::vec3(0.0f);
 }
 
-void Model::setColor(std::vector<Vertex>& vertices) {
+void Model::setColor(std::vector<Vertex>& vertices, std::vector<glmath::vec3>& colors) {
 	static std::random_device rd;
 	static std::mt19937 gen(rd());
 	static std::uniform_real_distribution<float> dis(0.0f, 1.0f);
 	
 	for (int i = 0; i < vertices.size() / 3; i++) {
 		glmath::vec3 color(dis(gen), dis(gen), dis(gen));
-		vertices[3 * i].color = color;
-		vertices[3 * i + 1].color = color;
-		vertices[3 * i + 2].color = color;
+		colors.push_back(color);
+		colors.push_back(color);
+		colors.push_back(color);
 	}
 }
 
@@ -57,17 +87,16 @@ bool Model::createMeshes(const std::string& fileName) {
 
 	std::vector<Vertex> vertices;
 	std::vector<uint32_t> indices;
+	std::vector<glmath::vec3> colors;
 
 	for (int i = 0; i < objInfo->indexInfo.faces.size(); i++) {
-		addVertex(objInfo.get(), vertices, indices, objInfo->indexInfo.faces[i].i1);
-		addVertex(objInfo.get(), vertices, indices, objInfo->indexInfo.faces[i].i2);
-		addVertex(objInfo.get(), vertices, indices, objInfo->indexInfo.faces[i].i3);
+		addVertex(objInfo.get(), vertices, indices, objInfo->indexInfo.faces[i]);
 	}
 	
 	setModelPos(vertices);
-	setColor(vertices);
+	setColor(vertices, colors);
 
-	m_meshes.push_back(Mesh::createMesh(vertices, indices, objInfo.get()));
+	m_meshes.push_back(Mesh::createMesh(vertices, indices, colors, objInfo.get()));
 
 	return true;
 }
