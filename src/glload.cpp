@@ -145,6 +145,8 @@ std::unique_ptr<glload::IObjLine> glload::generateLine(std::stringstream& ss, co
 	std::string element;
 	ss >> element;
 	if (element == "v") return std::unique_ptr<IObjLine>(new VertexLine(ss));
+	else if (element == "vt") return std::unique_ptr<IObjLine>(new VertexTextureLine(ss));
+	else if (element == "vn") return std::unique_ptr<IObjLine>(new VertexNormalLine(ss));
 	else if (element == "mtllib") return std::unique_ptr<IObjLine>(new MaterialLine(ss, fileName)); 
 	else if (element == "f") return std::unique_ptr<IObjLine>(new FaceLine(ss));
 	else if (element == "usemtl") return std::unique_ptr<IObjLine>(new ChangeMaterialLine(ss));
@@ -152,6 +154,12 @@ std::unique_ptr<glload::IObjLine> glload::generateLine(std::stringstream& ss, co
 }
 
 glload::VertexLine::VertexLine(std::stringstream& ss)
+	: ss(ss) {};
+
+glload::VertexTextureLine::VertexTextureLine(std::stringstream& ss)
+	: ss(ss) {};
+
+glload::VertexNormalLine::VertexNormalLine(std::stringstream& ss)
 	: ss(ss) {};
 
 glload::MaterialLine::MaterialLine(std::stringstream& ss,  const std::string& fileName)
@@ -174,17 +182,38 @@ bool glload::VertexLine::parsingLine(ObjInfo* objInfo) {
 	
 	if (v.size() != 3) return false;
 
-	// UV 텍스처 코드
-	// float pi = 3.141592f;
-	// float r = std::sqrt(v[0] * v[0] + v[1] * v[1] + v[2] * v[2]);
-	// if (r == 0) r = 1.0f;
-	// float theta = std::atan2(v[2], v[0]);
-	// float phi = std::asin(v[1] / r);
-	// float U = (phi + pi / 2) / pi;
-	// float V = (theta + pi) / (2.0f * pi);
-	// objInfo->vertexInfo.vTexInfo.push_back(TexCoord(V, U));
 	objInfo->vertexInfo.vPosInfo.push_back(Pos(v[0], v[1], v[2]));
+
+	return true;
+}
+
+bool glload::VertexTextureLine::parsingLine(ObjInfo* objInfo) {
+
+	std::vector<float> v;
+	float value;
+	
+	while (this->ss >> value) {
+		v.push_back(value);
+	}
+	
+	if (v.size() != 2) return false;
+
 	objInfo->vertexInfo.vTexInfo.push_back(TexCoord(v[0], v[1]));
+	return true;
+}
+
+bool glload::VertexNormalLine::parsingLine(ObjInfo* objInfo) {
+
+	std::vector<float> v;
+	float value;
+	
+	while (this->ss >> value) {
+		v.push_back(value);
+	}
+	
+	if (v.size() != 3) return false;
+
+	objInfo->vertexInfo.vNormalInfo.push_back(Normal(v[0], v[1], v[2]));
 
 	return true;
 }
@@ -228,7 +257,7 @@ bool glload::MaterialLine::parsingLine(ObjInfo* objInfo) {
 		if (!(ss >> identifier)) {
 			continue ;
 		}
-		if (identifier == "usemtl") {
+		if (identifier == "newmtl") {
 			if (!(ss >> name)) {
 				return false;
 			}
@@ -267,31 +296,89 @@ bool glload::MaterialLine::parsingLine(ObjInfo* objInfo) {
 	return true;
 }
 
+
+std::string glload::slashTospace(const std::string& str) {
+    std::string result;
+	int slashNum = 0;
+
+    for (size_t i = 0; i < str.size(); ++i) {
+        if (str[i] == '/') {
+			if (i + 1 < str.size() && str[i + 1] == '/') {
+				result += " 0 ";
+				i++;
+			}
+			else {
+				result += " ";
+			}
+			slashNum++;
+        } else {
+			result += str[i];
+        }
+    }
+
+	if (slashNum == 0) {
+		result += " 0 0";
+	} else if (slashNum == 1) {
+		result += " 0";
+	}
+    return result;
+}
+
+glload::Face glload::makeFace(std::vector<std::vector<int32_t>>& faceVec, int32_t mi, int i) {
+
+		Face face;
+
+		face.posIdx[0] = faceVec[0][0] - 1;
+		face.posIdx[1] = faceVec[i - 1][0] - 1;
+		face.posIdx[2] = faceVec[i][0] - 1;
+
+		face.texIdx[0] = faceVec[0][1] - 1;
+		face.texIdx[1] = faceVec[i - 1][1] - 1;
+		face.texIdx[2] = faceVec[i][1] - 1;
+
+		face.normalIdx[0] = faceVec[0][2] - 1;
+		face.normalIdx[1] = faceVec[i - 1][2] - 1;
+		face.normalIdx[2] = faceVec[i][2] - 1;
+
+		if (face.texIdx[0] < 0 || face.texIdx[1] < 0  || face.texIdx[2] < 0 ) {
+			face.hasTexture = false;
+		}
+
+		if (face.normalIdx[0] < 0 || face.normalIdx[1] < 0  || face.normalIdx[2] < 0 ) {
+			face.hasNormal = false;
+		}		
+
+		face.mi = mi;
+
+	return face;
+}
+
+
 bool glload::FaceLine::parsingLine(ObjInfo* objInfo) {
 
-	std::vector<uint32_t> v;
-	std::stringstream toUint32;
-	std::string line;
-	uint32_t value;
+	std::vector<std::string> infoVec;
+	std::vector<std::vector<int32_t>> faceVec;
+	std::string info;
+	int32_t value;
 
-	while (this->ss >> line) {
-		std::size_t pos = line.find('/');
-		if (pos != std::string::npos) {
-			line = line.substr(0, pos);
+	while (this->ss >> info) {
+		infoVec.push_back(slashTospace(info));
+	}
+
+	if (infoVec.size() < 3) return false;
+
+
+	faceVec.resize(infoVec.size());
+	for (int i = 0; i < infoVec.size(); i++) {
+		std::stringstream toInt32(infoVec[i]);
+		while (toInt32 >> value) {
+			faceVec[i].push_back(value);
 		}
-		toUint32 << line << " ";
 	}
 
-	while (toUint32 >> value) {
-			v.push_back(value);		
-	}
-	
-	if (v.size() < 3) return false;
-
-	int32_t mi = objInfo->indexInfo.materialIdx;
-
-	for (int i = 2; i < v.size(); i++) {
-		objInfo->indexInfo.faces.push_back(Face(v[0] - 1, v[i - 1] - 1, v[i] - 1, mi));
+	int32_t mi = objInfo->marterialInfo.materialIdx;
+	for (int i = 2; i < faceVec.size(); i++) {
+		objInfo->indexInfo.faces.push_back(makeFace(faceVec, mi, i));
 	}
 
 	return true;
@@ -305,7 +392,7 @@ bool glload::ChangeMaterialLine::parsingLine(ObjInfo* objInfo) {
 		uint32_t size = objInfo->marterialInfo.materials.size();
 		for (int i = 0; i < size; i++) {
 			if (name == objInfo->marterialInfo.materials[i].name) {
-				objInfo->indexInfo.materialIdx = i;
+				objInfo->marterialInfo.materialIdx = i;
 				return true;
 			}
 		}

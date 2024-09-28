@@ -48,20 +48,19 @@ struct TexCoord {
 struct VertexInfo {
 	std::vector<Pos> vPosInfo; 
 	std::vector<TexCoord> vTexInfo;
-	// std::vector<Normal> vNormalInfo; 
+	std::vector<Normal> vNormalInfo;
 };
 
 struct Face {
-	uint32_t i1;
-	uint32_t i2;
-	uint32_t i3;
+	int32_t posIdx[3];
+	int32_t texIdx[3];
+	int32_t normalIdx[3];
 	int32_t mi;
-
-	Face(uint32_t i1, uint32_t i2, uint32_t i3, int32_t mi) : i1(i1), i2(i2), i3(i3), mi(mi) {};
+	bool hasTexture {true};
+	bool hasNormal {true};
 };
 
 struct IndexInfo {
-	int32_t materialIdx{-1};
 	std::vector<Face> faces;
 };
 
@@ -79,6 +78,7 @@ struct Material {
 
 struct MaterialInfo {
 	std::vector<Material> materials;
+	int32_t materialIdx{-1};
 };
 
 struct ObjInfo {
@@ -97,6 +97,26 @@ class VertexLine : public IObjLine {
 public:
 	VertexLine(std::stringstream& ss);
 	virtual ~VertexLine() = default;
+	virtual bool parsingLine(ObjInfo* objInfo) override;
+
+private:
+	std::stringstream& ss;
+};
+
+class VertexTextureLine : public IObjLine {
+public:
+	VertexTextureLine(std::stringstream& ss);
+	virtual ~VertexTextureLine() = default;
+	virtual bool parsingLine(ObjInfo* objInfo) override;
+
+private:
+	std::stringstream& ss;
+};
+
+class VertexNormalLine : public IObjLine {
+public:
+	VertexNormalLine(std::stringstream& ss);
+	virtual ~VertexNormalLine() = default;
 	virtual bool parsingLine(ObjInfo* objInfo) override;
 
 private:
@@ -139,10 +159,12 @@ private:
 void flipImageVertically(int h, int w, int bpp, uint8_t* data);
 bool getBmpInfo(char* fileHeader, bmpInfo& info);
 bool checkFileExtension(std::string fileName, const std::string extension);
-std::unique_ptr<uint8_t[]> loadBmpImg(const char* fileName, int* width, int* height, int* channelCount);
+Face makeFace(std::vector<std::vector<int32_t>>& faceVec, int32_t mi, int i);
+std::string slashTospace(const std::string& str);
 std::optional<std::string> loadShaderFile(const std::string& fileName);
 std::unique_ptr<ObjInfo> loadObjFile(const std::string& fileName);
 std::unique_ptr<IObjLine> generateLine(std::stringstream& ss, const std::string& fileName);
+std::unique_ptr<uint8_t[]> loadBmpImg(const char* fileName, int* width, int* height, int* channelCount);
 }
 
 #endif
