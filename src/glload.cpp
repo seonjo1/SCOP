@@ -144,19 +144,23 @@ std::unique_ptr<glload::ObjInfo> glload::loadObjFile(const std::string& fileName
 std::unique_ptr<glload::IObjLine> glload::generateLine(std::stringstream& ss, const std::string& fileName) {
 	std::string element;
 	ss >> element;
-	if (element == "v") return std::unique_ptr<IObjLine>(new VertexLine(ss, fileName));
+	if (element == "v") return std::unique_ptr<IObjLine>(new VertexLine(ss));
 	else if (element == "mtllib") return std::unique_ptr<IObjLine>(new MaterialLine(ss, fileName)); 
-	else if (element == "f") return std::unique_ptr<IObjLine>(new FaceLine(ss, fileName));
-	else return nullptr;
+	else if (element == "f") return std::unique_ptr<IObjLine>(new FaceLine(ss));
+	else if (element == "usemtl") return std::unique_ptr<IObjLine>(new ChangeMaterialLine(ss));
+	return nullptr;
 }
 
-glload::VertexLine::VertexLine(std::stringstream& ss,  const std::string& fileName)
+glload::VertexLine::VertexLine(std::stringstream& ss)
 	: ss(ss) {};
 
 glload::MaterialLine::MaterialLine(std::stringstream& ss,  const std::string& fileName)
 	: ss(ss), fileName(fileName) {}
 
-glload::FaceLine::FaceLine(std::stringstream& ss,  const std::string& fileName)
+glload::FaceLine::FaceLine(std::stringstream& ss)
+	: ss(ss) {};
+
+glload::ChangeMaterialLine::ChangeMaterialLine(std::stringstream& ss)
 	: ss(ss) {};
 
 bool glload::VertexLine::parsingLine(ObjInfo* objInfo) {
@@ -216,7 +220,7 @@ bool glload::MaterialLine::parsingLine(ObjInfo* objInfo) {
 		return false;
 	}
 
-	std::string line, identifier;
+	std::string line, identifier, name;
 	float fVal;
 	uint32_t iVal;
 	while (std::getline(fin, line)) {
@@ -224,33 +228,40 @@ bool glload::MaterialLine::parsingLine(ObjInfo* objInfo) {
 		if (!(ss >> identifier)) {
 			continue ;
 		}
+		if (identifier == "usemtl") {
+			if (!(ss >> name)) {
+				return false;
+			}
+			objInfo->marterialInfo.materials.push_back(Material());
+			objInfo->marterialInfo.materials[objInfo->marterialInfo.materials.size() - 1].name = name;
+		}
 		if (identifier == "Ka") {
 			for (int i = 0; i < 3; i++) {
 				if (!(ss >> fVal)) return false;
-				objInfo->marterialInfo.Ka[i] = fVal;
+				objInfo->marterialInfo.materials[objInfo->marterialInfo.materials.size() - 1].Ka[i] = fVal;
 			}
 		} else if (identifier == "Kd") {
 			for (int i = 0; i < 3; i++) {
 				if (!(ss >> fVal)) return false;
-				objInfo->marterialInfo.Kd[i] = fVal;
+				objInfo->marterialInfo.materials[objInfo->marterialInfo.materials.size() - 1].Kd[i] = fVal;
 			}
 		} else if (identifier == "Ks") {
 			for (int i = 0; i < 3; i++) {
 				if (!(ss >> fVal)) return false;
-				objInfo->marterialInfo.Ks[i] = fVal;
+				objInfo->marterialInfo.materials[objInfo->marterialInfo.materials.size() - 1].Ks[i] = fVal;
 			}
 		} else if (identifier == "Ns") {
 			if (!(ss >> fVal)) return false;
-			objInfo->marterialInfo.Ns = fVal;
+			objInfo->marterialInfo.materials[objInfo->marterialInfo.materials.size() - 1].Ns = fVal;
 		} else if (identifier == "Ni") {
 			if (!(ss >> fVal)) return false;
-			objInfo->marterialInfo.Ni = fVal;
+			objInfo->marterialInfo.materials[objInfo->marterialInfo.materials.size() - 1].Ni = fVal;
 		} else if (identifier == "d") {
 			if (!(ss >> fVal)) return false;
-			objInfo->marterialInfo.d = fVal;
+			objInfo->marterialInfo.materials[objInfo->marterialInfo.materials.size() - 1].d = fVal;
 		} else if (identifier == "illum") {
 			if (!(ss >> iVal)) return false;
-			objInfo->marterialInfo.illum = iVal;
+			objInfo->marterialInfo.materials[objInfo->marterialInfo.materials.size() - 1].illum = iVal;
 		}
 	}
 	return true;
@@ -277,8 +288,27 @@ bool glload::FaceLine::parsingLine(ObjInfo* objInfo) {
 	
 	if (v.size() < 3) return false;
 
+	int32_t mi = objInfo->indexInfo.materialIdx;
+
 	for (int i = 2; i < v.size(); i++) {
-		objInfo->indexInfo.faces.push_back(Face(v[0] - 1, v[i - 1] - 1, v[i] - 1));
+		objInfo->indexInfo.faces.push_back(Face(v[0] - 1, v[i - 1] - 1, v[i] - 1, mi));
 	}
+
 	return true;
+}
+
+bool glload::ChangeMaterialLine::parsingLine(ObjInfo* objInfo) {
+
+	std::string name;
+
+	if (this->ss >> name) {
+		uint32_t size = objInfo->marterialInfo.materials.size();
+		for (int i = 0; i < size; i++) {
+			if (name == objInfo->marterialInfo.materials[i].name) {
+				objInfo->indexInfo.materialIdx = i;
+				return true;
+			}
+		}
+	}
+	return false;
 }

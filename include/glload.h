@@ -55,15 +55,18 @@ struct Face {
 	uint32_t i1;
 	uint32_t i2;
 	uint32_t i3;
+	int32_t mi;
 
-	Face(uint32_t i1, uint32_t i2, uint32_t i3) : i1(i1), i2(i2), i3(i3) {};
+	Face(uint32_t i1, uint32_t i2, uint32_t i3, int32_t mi) : i1(i1), i2(i2), i3(i3), mi(mi) {};
 };
 
 struct IndexInfo {
+	int32_t materialIdx{-1};
 	std::vector<Face> faces;
 };
 
 struct Material {
+	std::string name;
 	float Ka[3] { 0.2f, 0.2f, 0.2f };
 	float Kd[3] { 0.8f, 0.8f, 0.8f };
 	float Ks[3] { 0.5f, 0.5f, 0.5f };
@@ -73,10 +76,15 @@ struct Material {
 	uint32_t illum { 2 };
 };
 
+
+struct MaterialInfo {
+	std::vector<Material> materials;
+};
+
 struct ObjInfo {
 	VertexInfo vertexInfo;
 	IndexInfo indexInfo;
-	Material marterialInfo;
+	MaterialInfo marterialInfo;
 };
 
 class IObjLine {
@@ -87,7 +95,7 @@ public:
 
 class VertexLine : public IObjLine {
 public:
-	VertexLine(std::stringstream& ss, const std::string& fileName);
+	VertexLine(std::stringstream& ss);
 	virtual ~VertexLine() = default;
 	virtual bool parsingLine(ObjInfo* objInfo) override;
 
@@ -110,8 +118,18 @@ private:
 
 class FaceLine : public IObjLine {
 public:
-	FaceLine(std::stringstream& ss, const std::string& fileName);
+	FaceLine(std::stringstream& ss);
 	virtual ~FaceLine() = default;
+	virtual bool parsingLine(ObjInfo* objInfo) override;
+
+private:
+	std::stringstream& ss;
+};
+
+class ChangeMaterialLine : public IObjLine {
+public:
+	ChangeMaterialLine(std::stringstream& ss);
+	virtual ~ChangeMaterialLine() = default;
 	virtual bool parsingLine(ObjInfo* objInfo) override;
 
 private:
