@@ -305,6 +305,7 @@ std::string glload::slashTospace(const std::string& str) {
         if (str[i] == '/') {
 			if (i + 1 < str.size() && str[i + 1] == '/') {
 				result += " 0 ";
+				slashNum++;
 				i++;
 			}
 			else {
@@ -373,6 +374,9 @@ bool glload::FaceLine::parsingLine(ObjInfo* objInfo) {
 		std::stringstream toInt32(infoVec[i]);
 		while (toInt32 >> value) {
 			faceVec[i].push_back(value);
+		}
+		if (faceVec[i].size() != 3) {
+			return false;
 		}
 	}
 
