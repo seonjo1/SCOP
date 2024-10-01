@@ -26,14 +26,13 @@ bool Model::isAcrossUVBoundary(std::vector<Vertex>& vertices, int idx) {
 
 void Model::makeTextureCoord(std::vector<Vertex>& vertices) {
 	float rowPattern = 8;
-	float colPattern = 10;
+	float colPattern = 8;
 	
 	for (int i = 0; i < vertices.size(); i = i + 3) {
+		// UV 텍스처 코드
 		for (int j = 0; j < 3; j++) {
-			// glmath::vec3 pos = vertices[idx + i].pos;
 			glmath::vec3 pos = vertices[i + j].pos - m_modelPos;
 
-			// UV 텍스처 코드
 			float r = std::sqrt(pos.x * pos.x + pos.y * pos.y + pos.z * pos.z);
 			if (r == 0) r = 0.01f;
 			float theta = std::atan2(pos.z, pos.x);
@@ -50,6 +49,12 @@ void Model::makeTextureCoord(std::vector<Vertex>& vertices) {
 				}
 			}
 		}
+
+		// 평면 텍스처 코드
+		// for (int j = 0; j < 3; j++){
+		// 	vertices[i + j].texCoord.x = vertices[i + j].pos.z;
+		// 	vertices[i + j].texCoord.y = vertices[i + j].pos.y;
+		// }
 	}
 }
 
