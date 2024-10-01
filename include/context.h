@@ -12,14 +12,14 @@
 
 class Context {
 public:
-	static std::unique_ptr<Context> create();
+	static std::unique_ptr<Context> create(const char* objFile, const char* bmpFile);
 	void Render();
 	void ProcessInput(GLFWwindow *window);
 	void Reshape(int width, int height);
 
 private:
 	Context() {};
-	bool init();
+	bool init(const char* objFile, const char* bmpFile);
 
 	int m_width {WINDOW_WIDTH};
 	int m_height {WINDOW_HEIGHT};

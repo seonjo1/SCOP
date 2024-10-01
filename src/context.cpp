@@ -48,16 +48,16 @@ void Context::ProcessInput(GLFWwindow *window)
 	m_model->updateModel(move, degree, transSpeed);
 }
 
-std::unique_ptr<Context> Context::create() {
+std::unique_ptr<Context> Context::create(const char* objFile, const char* bmpFile) {
 	std::unique_ptr<Context> context(new Context());
-	if (!context->init()) return nullptr;
+	if (!context->init(objFile, bmpFile)) return nullptr;
 	return context;
 }
 
-bool Context::init() {
-	m_model = Model::create("./object/human.obj");
+bool Context::init(const char* objFile, const char* bmpFile) {
+	m_model = Model::create(objFile);
 	m_program = Program::create("./shader/simple.vs", "./shader/simple.fs");
-	m_image = Image::create("./image/sample.bmp");
+	m_image = Image::create(bmpFile);
 
 	if (!m_program || !m_model || !m_image) {
 		return false;
