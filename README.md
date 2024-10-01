@@ -50,4 +50,12 @@
   - 행렬 처리 라이브러리 사용 금지 (ex: glm)
   - 이미지 로드하는 라이브러리 사용 금지 (ex: stb)
  
-- 실행 결과
+## 실행 결과
+![스크린샷 2024-10-01 183453](https://github.com/user-attachments/assets/a8f4d372-dc83-41fd-a761-794ae594aa0d)
+![스크린샷 2024-10-01 183817](https://github.com/user-attachments/assets/206ff15f-70dc-4a0a-b319-22b1b5679276)
+
+![스크린샷 2024-10-01 183906](https://github.com/user-attachments/assets/37c02aa7-4fa4-483c-8a78-2b3bd1e84fff)
+![스크린샷 2024-10-01 183731](https://github.com/user-attachments/assets/203d5525-1133-490c-864e-f8add9602792)
+
+![스크린샷 2024-10-01 183425](https://github.com/user-attachments/assets/a5944120-712d-4320-bd64-ed0a17c86516)
+![스크린샷 2024-10-01 183358](https://github.com/user-attachments/assets/19054a73-7e2d-4e06-9b79-e369ef086c86)
