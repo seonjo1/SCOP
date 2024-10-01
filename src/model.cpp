@@ -24,25 +24,30 @@ bool Model::isAcrossUVBoundary(std::vector<Vertex>& vertices, int idx) {
 	return (startAria && endAria);
 }
 
-void Model::makeTextureCoord(std::vector<Vertex>& vertices, int idx) {
-	float patternNum = 8;
-	for (int i = 0; i < 3; i++) {
-		glmath::vec3 pos = vertices[idx + i].pos;
+void Model::makeTextureCoord(std::vector<Vertex>& vertices) {
+	float rowPattern = 8;
+	float colPattern = 10;
+	
+	for (int i = 0; i < vertices.size(); i = i + 3) {
+		for (int j = 0; j < 3; j++) {
+			// glmath::vec3 pos = vertices[idx + i].pos;
+			glmath::vec3 pos = vertices[i + j].pos - m_modelPos;
 
-		// UV 텍스처 코드
-		float r = std::sqrt(pos.x * pos.x + pos.y * pos.y + pos.z * pos.z);
-		if (r == 0) r = 0.01f;
-		float theta = std::atan2(pos.z, pos.x);
-		float phi = std::asin(pos.y / r);
-		float U = (phi + glmath::pi / 2) / glmath::pi * patternNum;
-		float V = (theta + glmath::pi) / (2 * glmath::pi) * patternNum;
-		vertices[idx + i].texCoord.x = V;
-		vertices[idx + i].texCoord.y = U;
-	}
-	if (isAcrossUVBoundary(vertices, idx)) {
-		for (int i = 0; i < 3; i++) {
-			if (vertices[idx + i].texCoord.x < patternNum / 2) {
-				vertices[idx + i].texCoord.x += patternNum;
+			// UV 텍스처 코드
+			float r = std::sqrt(pos.x * pos.x + pos.y * pos.y + pos.z * pos.z);
+			if (r == 0) r = 0.01f;
+			float theta = std::atan2(pos.z, pos.x);
+			float phi = std::asin(pos.y / r);
+			float U = (phi + glmath::pi / 2) / glmath::pi * colPattern;
+			float V = (theta + glmath::pi) / (2 * glmath::pi) * rowPattern;
+			vertices[i + j].texCoord.x = V;
+			vertices[i + j].texCoord.y = U;
+		}
+		if (isAcrossUVBoundary(vertices, i)) {
+			for (int j = 0; j < 3; j++) {
+				if (vertices[i + j].texCoord.x < rowPattern / 2) {
+					vertices[i + j].texCoord.x += rowPattern;
+				}
 			}
 		}
 	}
@@ -77,14 +82,6 @@ void Model::addVertex(glload::ObjInfo* objInfo, std::vector<Vertex>& vertices, s
 															  objInfo->vertexInfo.vNormalInfo[normalIdx].z
 															: glmath::vec3(0.0f))});
 		indices.push_back(vertices.size() - 1);
-	}
-	
-	if (!face.hasTexture) {
-		makeTextureCoord(vertices, vertices.size() - 3);
-	}
-	
-	if (!face.hasNormal) {
-		makeNormalVector(vertices, vertices.size() - 3);
 	}
 }
 
@@ -134,6 +131,7 @@ bool Model::createMeshes(const std::string& fileName) {
 	
 	setModelPos(vertices);
 	setColor(vertices, colors);
+	makeTextureCoord(vertices);
 
 	m_meshes.push_back(Mesh::createMesh(vertices, indices, colors, objInfo.get()));
 

@@ -18,7 +18,7 @@ private:
 	void addVertex(glload::ObjInfo* objInfo, std::vector<Vertex>& vertices, std::vector<uint32_t>& indices, glload::Face& face);
 	void setColor(std::vector<Vertex>& vertices, std::vector<glmath::vec3>& colors);
 	void setModelPos(std::vector<Vertex>& vertices);
-	void makeTextureCoord(std::vector<Vertex>& vertices, int idx);
+	void makeTextureCoord(std::vector<Vertex>& vertices);
 	void makeNormalVector(std::vector<Vertex>& vertices, int idx);
 	bool isAcrossUVBoundary(std::vector<Vertex>& vertices, int idx);
 
