@@ -15,6 +15,5 @@ void main() {
     gl_Position = projection * viewModel * vec4(aPos, 1.0f);
     texCoord = aTexCoord;
 
-    // 각 정점의 위치를 기반으로 의사난수 생성
     color = aColor;
 }
