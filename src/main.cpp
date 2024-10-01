@@ -14,6 +14,11 @@ void OnKeyEvent(GLFWwindow* window, int key, int scancode, int action, int mods)
 
 int main(int argc, const char** argv) {
 
+	if (argc != 3) {
+		std::cerr << "Usage: ./SCOP.exe <path_to_obj_file> <path_to_bmp_file>" << std::endl;
+		return -1;
+	}
+
 	std::cout << "Start program" << std::endl;
 
 	std::cout << "Initialize glfw" << std::endl;
@@ -45,9 +50,9 @@ int main(int argc, const char** argv) {
 		return -1;
 	}
 
-	std::unique_ptr<Context> context = Context::create();
+	std::unique_ptr<Context> context = Context::create(argv[1], argv[2]);
 	if (!context) {
-		std::cout << "failed to create context" << std::endl;
+		std::cerr << "failed to create context" << std::endl;
 		glfwTerminate();
 		return -1;
 	}
