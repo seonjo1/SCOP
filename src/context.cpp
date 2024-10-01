@@ -57,12 +57,12 @@ std::unique_ptr<Context> Context::create() {
 bool Context::init() {
 	m_model = Model::create("./object/Tree.obj");
 	m_program = Program::create("./shader/simple.vs", "./shader/simple.fs");
+	m_image = Image::create("./image/textre.bmp");
 
-	if (!m_program || !m_model) {
+	if (!m_program || !m_model || !m_image) {
 		return false;
 	}
 
-	m_image = Image::create("./image/texture.bmp");
 	m_texture = Texture::create(m_image);
 
 	glEnable(GL_DEPTH_TEST);
