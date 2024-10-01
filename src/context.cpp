@@ -55,9 +55,9 @@ std::unique_ptr<Context> Context::create() {
 }
 
 bool Context::init() {
-	m_model = Model::create("./object/Tree.obj");
+	m_model = Model::create("./object/human.obj");
 	m_program = Program::create("./shader/simple.vs", "./shader/simple.fs");
-	m_image = Image::create("./image/textre.bmp");
+	m_image = Image::create("./image/sample.bmp");
 
 	if (!m_program || !m_model || !m_image) {
 		return false;
@@ -66,7 +66,8 @@ bool Context::init() {
 	m_texture = Texture::create(m_image);
 
 	glEnable(GL_DEPTH_TEST);
-
+	glEnable(GL_MULTISAMPLE);
+	
 	return true;
 }
 
