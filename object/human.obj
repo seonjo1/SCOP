@@ -48933,7 +48933,7 @@ vn -0.2419 -0.9621 -0.1263
 # 24460 vertex normals
 
 g Group1
-usemtl default
+#usemtl default
 s 1
 f 1//1 2//2 3//3 4//4 
 f 4//4 3//3 5//5 6//6 
