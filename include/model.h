@@ -20,6 +20,8 @@ private:
 	void setModelPos(std::vector<Vertex>& vertices);
 	void makeTextureCoord(std::vector<Vertex>& vertices, int idx);
 	void makeNormalVector(std::vector<Vertex>& vertices, int idx);
+	bool isAcrossUVBoundary(std::vector<Vertex>& vertices, int idx);
+
 
 
 	std::vector<std::unique_ptr<Mesh>> m_meshes;

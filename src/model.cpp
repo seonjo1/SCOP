@@ -8,26 +8,44 @@ std::unique_ptr<Model> Model::create(std::string fileName) {
 	return model;
 }
 
-void Model::makeTextureCoord(std::vector<Vertex>& vertices, int idx) {
-	
+bool Model::isAcrossUVBoundary(std::vector<Vertex>& vertices, int idx) {
+
+	bool startAria = false;
+	bool endAria = false;
+
 	for (int i = 0; i < 3; i++) {
-		Vertex& vertex = vertices[idx + i];
-		// UV 텍스처 코드
-		// float pi = 3.141592f;
-		// float r = std::sqrt(vertex.pos.x * vertex.pos.x + vertex.pos.y * vertex.pos.y + vertex.pos.z * vertex.pos.z);
-		// if (r == 0) r = 1.0f;
-		// float theta = std::atan2(vertex.pos.y, vertex.pos.x);
-		// float phi = std::asin(vertex.pos.y / r);
-		// float U = (phi + pi / 2) / pi;
-		// float V = (theta + pi) / (2.0f * pi);
-		// vertex.texCoord.x = V;
-		// vertex.texCoord.y = U;
-
-		// x, y 텍스처 코드
-		vertex.texCoord.x = vertex.pos.x;
-		vertex.texCoord.y = vertex.pos.y;
+		if (vertices[idx + i].pos.x <= 0 && vertices[idx + i].pos.z >= 0) {
+			startAria = true;
+		}
+		if (vertices[idx + i].pos.x <= 0 && vertices[idx + i].pos.z < 0) {
+			endAria = true;
+		}
 	}
+	return (startAria && endAria);
+}
 
+void Model::makeTextureCoord(std::vector<Vertex>& vertices, int idx) {
+	float patternNum = 8;
+	for (int i = 0; i < 3; i++) {
+		glmath::vec3 pos = vertices[idx + i].pos;
+
+		// UV 텍스처 코드
+		float r = std::sqrt(pos.x * pos.x + pos.y * pos.y + pos.z * pos.z);
+		if (r == 0) r = 0.01f;
+		float theta = std::atan2(pos.z, pos.x);
+		float phi = std::asin(pos.y / r);
+		float U = (phi + glmath::pi / 2) / glmath::pi * patternNum;
+		float V = (theta + glmath::pi) / (2 * glmath::pi) * patternNum;
+		vertices[idx + i].texCoord.x = V;
+		vertices[idx + i].texCoord.y = U;
+	}
+	if (isAcrossUVBoundary(vertices, idx)) {
+		for (int i = 0; i < 3; i++) {
+			if (vertices[idx + i].texCoord.x < patternNum / 2) {
+				vertices[idx + i].texCoord.x += patternNum;
+			}
+		}
+	}
 }
 
 void Model::makeNormalVector(std::vector<Vertex>& vertices, int idx) {
@@ -60,6 +78,7 @@ void Model::addVertex(glload::ObjInfo* objInfo, std::vector<Vertex>& vertices, s
 															: glmath::vec3(0.0f))});
 		indices.push_back(vertices.size() - 1);
 	}
+	
 	if (!face.hasTexture) {
 		makeTextureCoord(vertices, vertices.size() - 3);
 	}
