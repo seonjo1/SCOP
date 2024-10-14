@@ -360,6 +360,63 @@ float glmath::radians(float degree) {
     return degree * (3.14159f / 180.0f);
 }
 
+glmath::mat4 glmath::inverse(const glmath::mat4& matrix) {
+	float coef00 = matrix[2][2] * matrix[3][3] - matrix[3][2] * matrix[2][3];
+	float coef02 = matrix[1][2] * matrix[3][3] - matrix[3][2] * matrix[1][3];
+	float coef03 = matrix[1][2] * matrix[2][3] - matrix[2][2] * matrix[1][3];
+
+	float coef04 = matrix[2][1] * matrix[3][3] - matrix[3][1] * matrix[2][3];
+	float coef06 = matrix[1][1] * matrix[3][3] - matrix[3][1] * matrix[1][3];
+	float coef07 = matrix[1][1] * matrix[2][3] - matrix[2][1] * matrix[1][3];
+
+	float coef08 = matrix[2][1] * matrix[3][2] - matrix[3][1] * matrix[2][2];
+	float coef10 = matrix[1][1] * matrix[3][2] - matrix[3][1] * matrix[1][2];
+	float coef11 = matrix[1][1] * matrix[2][2] - matrix[2][1] * matrix[1][2];
+
+	float coef12 = matrix[2][0] * matrix[3][3] - matrix[3][0] * matrix[2][3];
+	float coef14 = matrix[1][0] * matrix[3][3] - matrix[3][0] * matrix[1][3];
+	float coef15 = matrix[1][0] * matrix[2][3] - matrix[2][0] * matrix[1][3];
+
+	float coef16 = matrix[2][0] * matrix[3][2] - matrix[3][0] * matrix[2][2];
+	float coef18 = matrix[1][0] * matrix[3][2] - matrix[3][0] * matrix[1][2];
+	float coef19 = matrix[1][0] * matrix[2][2] - matrix[2][0] * matrix[1][2];
+
+	float coef20 = matrix[2][0] * matrix[3][1] - matrix[3][0] * matrix[2][1];
+	float coef22 = matrix[1][0] * matrix[3][1] - matrix[3][0] * matrix[1][1];
+	float coef23 = matrix[1][0] * matrix[2][1] - matrix[2][0] * matrix[1][1];
+
+
+	glmath::vec4 fac0(coef00, coef00, coef02, coef03);
+	glmath::vec4 fac1(coef04, coef04, coef06, coef07);
+	glmath::vec4 fac2(coef08, coef08, coef10, coef11);
+	glmath::vec4 fac3(coef12, coef12, coef14, coef15);
+	glmath::vec4 fac4(coef16, coef16, coef18, coef19);
+	glmath::vec4 fac5(coef20, coef20, coef22, coef23);
+
+	glmath::vec4 vec0(matrix[1][0], matrix[0][0], matrix[0][0], matrix[0][0]);
+	glmath::vec4 vec1(matrix[1][1], matrix[0][1], matrix[0][1], matrix[0][1]);
+	glmath::vec4 vec2(matrix[1][2], matrix[0][2], matrix[0][2], matrix[0][2]);
+	glmath::vec4 vec3(matrix[1][3], matrix[0][3], matrix[0][3], matrix[0][3]);
+
+	glmath::vec4 inv0(vec1 * fac0 - vec2 * fac1 + vec3 * fac2);
+	glmath::vec4 inv1(vec0 * fac0 - vec2 * fac3 + vec3 * fac4);
+	glmath::vec4 inv2(vec0 * fac1 - vec1 * fac3 + vec3 * fac5);
+	glmath::vec4 inv3(vec0 * fac2 - vec1 * fac4 + vec2 * fac5);
+
+	glmath::vec4 signA(+1, -1, +1, -1);
+	glmath::vec4 signB(-1, +1, -1, +1);
+	glmath::mat4 inverse(inv0 * signA, inv1 * signB, inv2 * signA, inv3 * signB);
+
+	glmath::vec4 row0(inverse[0][0], inverse[1][0], inverse[2][0], inverse[3][0]);
+
+	glmath::vec4 dot0(matrix[0] * row0);
+	float det = (dot0.x + dot0.y) + (dot0.z + dot0.w);
+
+	float oneOverDeterminant = 1.0f / det;
+
+	return inverse * oneOverDeterminant;
+}
+
 glmath::mat4 glmath::scale(const glmath::mat4& matrix, const glmath::vec3& vector) {
 	glmath::mat4 scaleMatrix(glmath::vec4(vector.x, 0.0f, 0.0f, 0.0f),
 							glmath::vec4(0.0f, vector.y, 0.0f, 0.0f),
@@ -401,15 +458,13 @@ glmath::mat4 glmath::perspective(float fovy, float aspect, float zNear, float zF
 						glmath::vec4(0.0f, 0.0f, (2 * zFar * zNear) / (zNear - zFar), 0.0f));
 }
 
-glmath::mat4 glmath::lookAt(glmath::vec3 cameraPos, glmath::vec3 cameraTarget, glmath::vec3 cameraUp) {
+glmath::mat4 glmath::lookAt(const glmath::vec3& cameraPos, const glmath::vec3& cameraTarget, const glmath::vec3& cameraUp) {
 	glmath::vec3 cameraZ = glmath::normalize(cameraPos - cameraTarget);
 	glmath::vec3 cameraX = glmath::normalize(glmath::cross(cameraUp, cameraZ));
-	glmath::vec3 cameraY = glmath::cross(cameraZ, cameraX);
-	return glmath::mat4(glmath::vec4(cameraX.x, cameraX.y, cameraX.z, 0.0f),
+	glmath::vec3 cameraY = glmath::normalize(glmath::cross(cameraZ, cameraX));
+	glmath::mat4 matrix(glmath::vec4(cameraX.x, cameraX.y, cameraX.z, 0.0f),
 						glmath::vec4(cameraY.x, cameraY.y, cameraY.z, 0.0f),
 						glmath::vec4(cameraZ.x, cameraZ.y, cameraZ.z, 0.0f),
-						glmath::vec4(-glmath::dot(cameraPos, cameraX),
-									-glmath::dot(cameraPos, cameraY),
-									-glmath::dot(cameraPos, cameraZ),
-									1.0f));
+						glmath::vec4(cameraPos.x, cameraPos.y, cameraPos.z, 1.0f));
+	return glmath::inverse(matrix);
 }

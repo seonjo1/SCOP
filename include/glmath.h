@@ -107,11 +107,12 @@ vec4 normalize(const vec4& vector);
 
 float radians(float degree);
 
+mat4 inverse(const mat4& matrix);
 mat4 scale(const mat4& matrix, const vec3& vector);
 mat4 translate(const mat4& matrix, const vec3& vector);
 mat4 rotate(const mat4& matrix, float theta, const vec3& vector);
 mat4 perspective(float fovy, float aspect, float zNear, float zFar);
-mat4 lookAt(vec3 cameraPos, vec3 cameraTarget, vec3 cameraUp);
+mat4 lookAt(const vec3& cameraPos, const vec3& cameraTarget, const vec3& cameraUp);
 
 }
 
